@@ -16,7 +16,9 @@
     <link rel="apple-touch-icon" href="icon-192.png">
     
     <style>
-        body { overscroll-behavior-y: contain; }
+html, body { overscroll-behavior-y: none; }
+    #live-log-container::-webkit-scrollbar { width: 4px; }
+    #live-log-container::-webkit-scrollbar-thumb { background-color: #78716c; border-radius: 2px; }
         #live-log-container::-webkit-scrollbar { width: 4px; }
         #live-log-container::-webkit-scrollbar-thumb { background-color: #78716c; border-radius: 2px; }
     </style>

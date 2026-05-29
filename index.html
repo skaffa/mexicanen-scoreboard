@@ -18,9 +18,23 @@
         html, body { overscroll-behavior-y: none; }
         #live-log-container::-webkit-scrollbar { width: 4px; }
         #live-log-container::-webkit-scrollbar-thumb { background-color: #78716c; border-radius: 2px; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        .animate-modal { animation: fadeIn 0.15s ease-out forwards; }
     </style>
 </head>
-<body class="bg-stone-950 text-stone-100 font-sans min-h-screen flex flex-col justify-between p-3">
+<body class="bg-stone-950 text-stone-100 font-sans min-h-screen flex flex-col justify-between p-3 select-none">
+
+    <div id="custom-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-stone-900 border border-amber-600/40 rounded-2xl w-full max-w-sm p-5 shadow-2xl flex flex-col gap-4 text-center animate-modal">
+            <div id="modal-icon" class="text-3xl">🌵</div>
+            <p id="modal-message" class="text-stone-200 font-bold text-sm leading-relaxed"></p>
+            <input type="number" id="modal-input" class="hidden bg-stone-800 border border-stone-700 rounded-lg px-3 py-2.5 text-white font-black text-center focus:outline-none focus:ring-2 focus:ring-amber-500 text-lg w-full">
+            <div class="flex gap-2 justify-center mt-2">
+                <button id="modal-btn-cancel" class="hidden bg-stone-800 hover:bg-stone-750 text-stone-400 font-bold px-4 py-2.5 rounded-xl text-xs uppercase tracking-wider border border-stone-700 transition w-full">Cancelar</button>
+                <button id="modal-btn-confirm" class="bg-amber-600 hover:bg-amber-500 text-stone-950 font-black px-4 py-2.5 rounded-xl text-xs uppercase tracking-wider border-b-2 border-amber-800 transition w-full">Aceptar</button>
+            </div>
+        </div>
+    </div>
 
     <div id="setup-screen" class="w-full max-w-md mx-auto flex-1 flex flex-col justify-between">
         <div>
@@ -109,7 +123,7 @@
                 <h3 class="text-[10px] font-bold text-stone-400 uppercase tracking-wider mb-1">
                     Registro de Acciones (Línea de Tiempo)
                 </h3>
-                <div id="live-log-container" class="space-y-1 max-h-24 overflow-y-auto text-[11px] pr-1 select-none">
+                <div id="live-log-container" class="space-y-1 max-h-24 overflow-y-auto text-[11px] pr-1">
                     </div>
                 <div id="log-resizer" class="h-2.5 cursor-ns-resize bg-stone-800/50 hover:bg-amber-500/40 transition-colors rounded mt-2 flex items-center justify-center touch-none">
                     <div class="w-8 h-0.5 bg-stone-600 rounded"></div>
@@ -173,15 +187,74 @@
             document.getElementById('history-screen').classList.add('hidden');
             
             document.getElementById(screenId).classList.remove('hidden');
-
             if (screenId === 'history-screen') renderHistory();
+        }
+
+        // --- NEW: SYSTEM FOR CUSTOM DIALOG MODALS (ALERT, CONFIRM, PROMPT) ---
+        function showModal({ message, icon = '🌵', type = 'alert', defaultValue = '' }) {
+            return new Promise((resolve) => {
+                const modal = document.getElementById('custom-modal');
+                const msgEl = document.getElementById('modal-message');
+                const iconEl = document.getElementById('modal-icon');
+                const inputEl = document.getElementById('modal-input');
+                const btnCancel = document.getElementById('modal-btn-cancel');
+                const btnConfirm = document.getElementById('modal-btn-confirm');
+
+                msgEl.innerText = message;
+                iconEl.innerText = icon;
+                
+                inputEl.classList.add('hidden');
+                btnCancel.classList.add('hidden');
+                
+                if (type === 'confirm') {
+                    btnCancel.classList.remove('hidden');
+                    btnCancel.innerText = 'No / Cancelar';
+                    btnConfirm.innerText = 'Sí / Aceptar';
+                } else if (type === 'prompt') {
+                    inputEl.classList.remove('hidden');
+                    inputEl.value = defaultValue;
+                    btnCancel.classList.remove('hidden');
+                    btnCancel.innerText = 'Cancelar';
+                    btnConfirm.innerText = 'Aceptar';
+                    setTimeout(() => inputEl.focus(), 50); // Auto focus input
+                } else {
+                    btnConfirm.innerText = '¡Órale!';
+                }
+
+                modal.classList.remove('hidden');
+
+                function cleanup(value) {
+                    modal.classList.add('hidden');
+                    btnConfirm.removeEventListener('click', onConfirm);
+                    btnCancel.removeEventListener('click', onCancel);
+                    inputEl.removeEventListener('keypress', onKeyPress);
+                    resolve(value);
+                }
+
+                function onConfirm() {
+                    if (type === 'prompt') cleanup(inputEl.value);
+                    else cleanup(true);
+                }
+
+                function onCancel() {
+                    if (type === 'prompt') cleanup(null);
+                    else cleanup(false);
+                }
+
+                function onKeyPress(e) {
+                    if (e.key === 'Enter') onConfirm();
+                }
+
+                btnConfirm.addEventListener('click', onConfirm);
+                btnCancel.addEventListener('click', onCancel);
+                if (type === 'prompt') inputEl.addEventListener('keypress', onKeyPress);
+            });
         }
 
         // --- TRAFFIC LIGHT LOGIC ---
         function getScoreColor(score, target) {
             let p = Math.min(1, Math.max(0, score / target));
             let r, g, b;
-
             if (p <= 0.33) {
                 let stopP = p / 0.33;
                 r = Math.round(16 + (234 - 16) * stopP);
@@ -198,7 +271,6 @@
                 g = Math.round(115 + (63 - 115) * stopP);
                 b = Math.round(22 + (94 - 22) * stopP);
             }
-
             return `rgb(${r}, ${g}, ${b})`;
         }
 
@@ -257,9 +329,9 @@
         }
 
         // --- LÓGICA DEL JUEGO ---
-        function startGame() {
+        async function startGame() {
             if (players.length === 0) {
-                alert('¡No puedes jugar sin amigos! Añade jugadores.');
+                await showModal({ message: '¡No puedes jugar sin amigos! Añade jugadores.', icon: '👥' });
                 return;
             }
             
@@ -290,15 +362,20 @@
             renderScoreboard();
         }
 
-        function updateScoreCustom(player) {
-            const userInput = prompt(`¿Cuántos puntos recibe (o pierde) ${player}?`);
+        async function updateScoreCustom(player) {
+            const userInput = await showModal({ 
+                message: `¿Cuántos puntos recibe o pierde ${player}?`, 
+                icon: '🎲', 
+                type: 'prompt',
+                defaultValue: '1'
+            });
             const amount = parseInt(userInput, 10);
             if (!isNaN(amount) && amount !== 0) {
                 updateScore(player, amount);
             }
         }
 
-        function undoLastAction() {
+        async function undoLastAction() {
             if (gameTimeline.length > 1) {
                 gameTimeline.pop(); 
                 currentRoundLog.pop(); 
@@ -307,7 +384,7 @@
                 renderScoreboard();
                 renderLiveFeed();
             } else {
-                alert("¡No hay acciones para deshacer, amigo!");
+                await showModal({ message: '¡No hay acciones para deshacer, amigo!', icon: '↩️' });
             }
         }
 
@@ -386,7 +463,7 @@
             }
         }
 
-        function endGame() {
+        async function endGame() {
             let loser = null;
             let highestScore = -Infinity;
 
@@ -398,7 +475,13 @@
             }
 
             if (!loser) {
-                if(!confirm(`Nadie ha llegado a ${targetScore} puntos. ¿Seguro que el juego ha terminado?`)) return;
+                const confirmEnd = await showModal({ 
+                    message: `Nadie ha llegado a ${targetScore} puntos. ¿Seguro que el juego ha terminado?`, 
+                    icon: '🤔', 
+                    type: 'confirm' 
+                });
+                if (!confirmEnd) return;
+                
                 let max = -Infinity;
                 for (const p in scores) {
                     if(scores[p] > max) { max = scores[p]; loser = p; }
@@ -418,14 +501,13 @@
             history.unshift(session);
             localStorage.setItem('mexicanen_timeline_history', JSON.stringify(history));
 
-            alert(`¡Ay caramba! ¡${loser} ha perdido el juego con ${scores[loser]} puntos! 💀`);
+            await showModal({ message: `¡Ay caramba! ¡${loser} ha perdido el juego con ${scores[loser]} puntos! 💀`, icon: '💀' });
             clearActiveGame(); 
             showScreen('history-screen');
         }
 
-        // --- HISTORIAL (FIXED) ---
+        // --- HISTORIAL ---
         function renderHistory() {
-            // FIX 1: Reset de actieve cache omdat de UI-elementen (canvas) hieronder volledig opnieuw worden getekend
             activeCharts = {}; 
 
             const container = document.getElementById('history-container');
@@ -467,8 +549,9 @@
             }).join('');
         }
 
-        function deleteHistoryItem(id) {
-            if (confirm("¿Seguro que quieres borrar este juego del El Muro? 💀")) {
+        async function deleteHistoryItem(id) {
+            const confirmDelete = await showModal({ message: '¿Seguro que quieres borrar este juego del El Muro? 💀', icon: '🗑️', type: 'confirm' });
+            if (confirmDelete) {
                 if (activeCharts[id]) {
                     activeCharts[id].destroy();
                     delete activeCharts[id];
@@ -479,15 +562,12 @@
             }
         }
 
-        // FIX 3: Timeout toegevoegd zodat de browser de container kan renderen vóór Chart.js zijn meting doet
         function toggleChart(id) {
             const container = document.getElementById(`chart-container-${id}`);
             const isHidden = container.classList.contains('hidden');
             if (isHidden) {
                 container.classList.remove('hidden');
-                setTimeout(() => {
-                    buildChart(id);
-                }, 5); // 5ms is genoeg om een lege/ingeklapte grafiek te voorkomen
+                setTimeout(() => { buildChart(id); }, 5); 
             } else {
                 container.classList.add('hidden');
             }
@@ -542,8 +622,9 @@
             });
         }
 
-        function clearHistory() {
-            if (confirm("¿Seguro que quieres borrar todo el historial? 💀")) {
+        async function clearHistory() {
+            const confirmClear = await showModal({ message: '¿Seguro que quieres borrar todo el historial? 💀', icon: '💥', type: 'confirm' });
+            if (confirmClear) {
                 Object.values(activeCharts).forEach(chart => chart.destroy());
                 activeCharts = {};
                 history = [];
@@ -552,9 +633,9 @@
             }
         }
 
-        function exportHistory() {
+        async function exportHistory() {
             if (history.length === 0) {
-                alert("¡No hay datos para exportar, amigo!");
+                await showModal({ message: '¡No hay datos para exportar, amigo!', icon: '📦' });
                 return;
             }
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(history, null, 2));
@@ -614,14 +695,6 @@
                 renderScoreboard();
                 renderLiveFeed();
             }
-        }
-
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('Service Worker geregistreerd!'))
-                    .catch(err => console.log('Service Worker gefaald:', err));
-            });
         }
 
         renderSetupPlayers();

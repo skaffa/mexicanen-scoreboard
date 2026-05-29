@@ -12,9 +12,6 @@
     <meta name="apple-mobile-web-app-title" content="Mexicanen Pro">
     <link rel="apple-touch-icon" href="icon-512.png">
 
-    <link rel="icon" href="icon-512.png" type="image/x-icon">
-
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -35,13 +32,16 @@
                     <svg class="w-7 h-7 text-orange-500" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
                         <path d="M2 17c2-1.5 5-2 10-2s8 .5 10 2 M2 17c1 2 4 2.5 10 2.5s9-.5 10-2.5 M7 15.5V13c0-2.5 1.5-4 3.5-4h3c2 0 3.5 1.5 3.5 4v2.5 M7.5 13.5h9" />
                     </svg>
-                    <svg class="w-7 h-7 text-rose-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    <svg class="w-7 h-7 text-amber-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <rect x="3" y="3" width="18" height="18" rx="2" />
+                        <circle cx="8.5" cy="8.5" r="1.3" fill="currentColor"/>
+                        <circle cx="15.5" cy="15.5" r="1.3" fill="currentColor"/>
+                        <circle cx="12" cy="12" r="1.3" fill="currentColor"/>
                     </svg>
                 </div>
                 <div class="h-1 bg-gradient-to-r from-rose-500 via-amber-500 via-emerald-500 to-indigo-500 rounded my-2"></div>
-                <h1 class="text-3xl font-black text-amber-500 tracking-wider uppercase drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">¡Mexicanen!</h1>
-                <p class="text-xs font-bold text-stone-400 tracking-wide uppercase">Configuración de la Fiesta</p>
+                <h1 class="text-3xl font-black text-amber-500 tracking-wider uppercase drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">¡Mexicanen! Pro</h1>
+                <p class="text-xs font-bold text-stone-300 tracking-wide uppercase">Configuración de la Fiesta</p>
             </div>
             
             <div class="bg-stone-900 p-3 rounded-xl shadow-xl border border-amber-900/30 mb-4 flex flex-col gap-3">
@@ -118,12 +118,12 @@
         </div>
 
         <div class="mt-3 flex gap-2">
-            <button onclick="undoLastAction()" title="Deshacer última acción"
+            <button onclick="undoLastAction()" title="Laatste actie ongedaan maken"
                 class="bg-stone-900 hover:bg-stone-800 text-stone-400 border border-stone-800 font-bold px-4 py-3 rounded-xl text-base shadow-lg transition active:scale-95 flex items-center justify-center">
                 <span>↩️</span>
             </button>
             <button id="end-game-btn" onclick="endGame()" 
-                class="flex-1 bg-stone-800 text-stone-400 font-black py-3 rounded-xl text-base shadow-lg transition uppercase tracking-widest border-b-4 border-stone-900 flex justify-center items-center gap-2">
+                class="flex-1 bg-stone-800 text-stone-400 font-black py-3 rounded-xl text-sm shadow-lg transition uppercase tracking-widest border-b-4 border-stone-900 flex justify-center items-center gap-2">
                 <span>Terminar Ronda</span>
             </button>
         </div>
@@ -173,40 +173,35 @@
             document.getElementById('history-screen').classList.add('hidden');
             
             document.getElementById(screenId).classList.remove('hidden');
+
             if (screenId === 'history-screen') renderHistory();
         }
 
-        // --- NEW: Dynamic Color Interpolation (Green to Red) ---
+        // --- TRAFFIC LIGHT LOGIC ---
         function getScoreColor(score, target) {
             let p = Math.min(1, Math.max(0, score / target));
             let r, g, b;
-        
+
             if (p <= 0.33) {
-                // Stop 1: Groen naar Geel
-                // Verloop van Emerald-500 (16, 185, 129) naar Amber-500 (234, 179, 8)
                 let stopP = p / 0.33;
                 r = Math.round(16 + (234 - 16) * stopP);
                 g = Math.round(185 + (179 - 185) * stopP);
                 b = Math.round(129 + (8 - 129) * stopP);
             } else if (p <= 0.66) {
-                // Stop 2: Geel naar Oranje
-                // Verloop van Amber-500 (234, 179, 8) naar Orange-500 (249, 115, 22)
                 let stopP = (p - 0.33) / 0.33;
                 r = Math.round(234 + (249 - 234) * stopP);
                 g = Math.round(179 + (115 - 179) * stopP);
                 b = Math.round(8 + (22 - 8) * stopP);
             } else {
-                // Stop 3: Oranje naar Rood
-                // Verloop van Orange-500 (249, 115, 22) naar Rose-500 (244, 63, 94)
-                let stopP = (p - 0.66) / 0.34; // Resterende 34%
+                let stopP = (p - 0.66) / 0.34;
                 r = Math.round(249 + (244 - 249) * stopP);
                 g = Math.round(115 + (63 - 115) * stopP);
                 b = Math.round(22 + (94 - 22) * stopP);
             }
-        
+
             return `rgb(${r}, ${g}, ${b})`;
         }
-        // --- NEW: Mid-game persistence storage ---
+
         function saveActiveGame() {
             localStorage.setItem('mexicanen_game_active', 'true');
             localStorage.setItem('mexicanen_current_scores', JSON.stringify(scores));
@@ -322,13 +317,10 @@
             
             if (amount === 1) {
                 iconSvg = `<svg class="w-3.5 h-3.5 text-stone-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg>`;
-                eventText = `<span class="text-stone-300 font-medium">${player}</span> recibe <span class="text-stone-400 font-bold">+1 Punto</span> (Ronda Regular)`;
+                eventText = `<span class="text-stone-300 font-medium">${player}</span> recibe <span class="text-stone-400 font-bold">+1 Punto</span>`;
             } else if (amount === 2) {
                 iconSvg = `<svg class="w-3.5 h-3.5 text-orange-500" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M2 18h20 M2 18c0-2 4-3.5 10-3.5s10 1.5 10 3.5 M7 15.5l1.5-6A2 2 0 0 1 10.5 8h3a2 2 0 0 1 2 1.5l1.5 6.5 M8.5 13h7" /></svg>`;
-                eventText = `<span class="text-stone-300 font-medium">${player}</span> ¡sufre un <span class="text-amber-500 font-bold">MEXICANO! 🌵</span> (Puntos duplicados)`;
-            } else if (amount === 4) {
-                iconSvg = `<svg class="w-3.5 h-3.5 text-rose-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`;
-                eventText = `<span class="text-stone-300 font-medium">${player}</span> ¡sufre un <span class="text-rose-500 font-black animate-pulse">CHINO! 🐉</span> (Puntos cuádruples)`;
+                eventText = `<span class="text-stone-300 font-medium">${player}</span> ¡sufre un <span class="text-amber-500 font-bold">MEXICANO! 🌵</span>`;
             } else if (amount > 0) {
                 iconSvg = `<svg class="w-3.5 h-3.5 text-red-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>`;
                 eventText = `<span class="text-stone-300 font-medium">${player}</span> recibe <span class="text-red-500 font-black">+${amount} Puntos</span>`;
@@ -367,7 +359,6 @@
                 const isLosing = score >= targetScore; 
                 if (isLosing) limitReached = true;
 
-                // NEW: Get dynamic relative color based on score ratio
                 const textColor = getScoreColor(score, targetScore);
 
                 return `
@@ -379,7 +370,6 @@
                         <div class="flex gap-1 flex-shrink-0">
                             <button onclick="updateScore('${player}', 1)" class="bg-emerald-600 hover:bg-emerald-500 text-stone-950 font-black w-14 h-9 rounded-lg text-xs active:scale-95 border-b-2 border-emerald-800 flex items-center justify-center">+1</button>
                             <button onclick="updateScore('${player}', 2)" class="bg-amber-500 hover:bg-amber-400 text-stone-950 font-black w-14 h-9 rounded-lg text-xs active:scale-95 border-b-2 border-amber-700 flex items-center justify-center">+2</button>
-                            <button onclick="updateScore('${player}', 4)" class="bg-rose-500 hover:bg-rose-400 text-stone-950 font-black w-14 h-9 rounded-lg text-xs active:scale-95 border-b-2 border-rose-700 flex items-center justify-center">+4</button>
                             <button onclick="updateScoreCustom('${player}')" class="bg-indigo-600 hover:bg-indigo-500 text-white font-black w-11 h-9 rounded-lg text-xs active:scale-95 border-b-2 border-indigo-800 flex items-center justify-center">±X</button>
                         </div>
                     </div>
@@ -429,12 +419,15 @@
             localStorage.setItem('mexicanen_timeline_history', JSON.stringify(history));
 
             alert(`¡Ay caramba! ¡${loser} ha perdido el juego con ${scores[loser]} puntos! 💀`);
-            clearActiveGame(); // Reset active game state
+            clearActiveGame(); 
             showScreen('history-screen');
         }
 
-        // --- HISTORIAL ---
+        // --- HISTORIAL (FIXED) ---
         function renderHistory() {
+            // FIX 1: Reset de actieve cache omdat de UI-elementen (canvas) hieronder volledig opnieuw worden getekend
+            activeCharts = {}; 
+
             const container = document.getElementById('history-container');
             if (history.length === 0) {
                 container.innerHTML = `<div class="text-stone-600 text-center py-6 text-xs italic">El cementerio de perdedores (El Muro) aún está vacío...</div>`;
@@ -466,7 +459,7 @@
                             class="w-full bg-stone-800 hover:bg-stone-700 text-amber-500 font-bold py-1.5 rounded-lg text-[10px] uppercase tracking-wider transition flex justify-center items-center gap-1">
                             <span>¡Ver historial de juego! (Gráfico)</span>
                         </button>
-                        <div id="chart-container-${session.id}" class="hidden mt-2 pt-2 border-t border-stone-800" style="height: 300px;">
+                        <div id="chart-container-${session.id}" class="hidden mt-2 pt-2 border-t border-stone-800 h-56">
                             <canvas id="canvas-${session.id}"></canvas>
                         </div>
                     </div>
@@ -486,12 +479,15 @@
             }
         }
 
+        // FIX 3: Timeout toegevoegd zodat de browser de container kan renderen vóór Chart.js zijn meting doet
         function toggleChart(id) {
             const container = document.getElementById(`chart-container-${id}`);
             const isHidden = container.classList.contains('hidden');
             if (isHidden) {
                 container.classList.remove('hidden');
-                buildChart(id);
+                setTimeout(() => {
+                    buildChart(id);
+                }, 5); // 5ms is genoeg om een lege/ingeklapte grafiek te voorkomen
             } else {
                 container.classList.add('hidden');
             }
@@ -528,22 +524,11 @@
                     scales: {
                         x: { 
                             grid: { color: '#292524' }, 
-                            ticks: { 
-                                color: '#78716c', 
-                                font: { size: 9, weight: 'bold' },
-                                autoSkip: false 
-                            },
-                            title: { display: true, text: 'Cambios de puntuación', color: '#a8a29e', font: { size: 10, weight: 'black' } }
+                            ticks: { color: '#78716c', font: { size: 9, weight: 'bold' } }
                         },
                         y: { 
                             grid: { color: '#292524' }, 
-                            ticks: { 
-                                color: '#a8a29e', 
-                                stepSize: 1, 
-                                font: { size: 9, weight: 'bold' },
-                                autoSkip: false 
-                            },
-                            title: { display: true, text: 'Puntos', color: '#a8a29e', font: { size: 10, weight: 'black' } },
+                            ticks: { color: '#a8a29e', stepSize: 1, font: { size: 9, weight: 'bold' } },
                             suggestedMax: session.targetScore || 10 
                         }
                     },
@@ -551,12 +536,6 @@
                         legend: {
                             labels: { color: '#d6d3d1', font: { weight: 'black', size: 10 } },
                             position: 'top'
-                        },
-                        title: {
-                            display: true,
-                            text: `Progreso hacia el límite (${session.targetScore || 10} pts)`,
-                            color: '#e7e5e4',
-                            font: { size: 12, weight: 'black' }
                         }
                     }
                 }
@@ -587,13 +566,11 @@
             downloadAnchor.remove();
         }
 
-        // --- NEW: Resizable Log Initializer (Mouse & Touch) ---
         function initResizableLog() {
             const resizer = document.getElementById('log-resizer');
             const logContainer = document.getElementById('live-log-container');
             let isResizing = false;
 
-            // Load saved height preference
             const savedHeight = localStorage.getItem('mexicanen_log_height');
             if (savedHeight) logContainer.style.maxHeight = savedHeight;
 
@@ -609,8 +586,8 @@
                 if (!isResizing) return;
                 const rect = logContainer.getBoundingClientRect();
                 let newHeight = clientY - rect.top;
-                if (newHeight < 48) newHeight = 48;   // Min hoogte
-                if (newHeight > 320) newHeight = 320; // Max hoogte
+                if (newHeight < 48) newHeight = 48;   
+                if (newHeight > 320) newHeight = 320; 
                 logContainer.style.maxHeight = `${newHeight}px`;
             }
 
@@ -625,7 +602,6 @@
             document.addEventListener('touchend', stopResize);
         }
 
-        // --- NEW: Restore Active Game Session on Boot ---
         function checkAndRestoreActiveGame() {
             if (localStorage.getItem('mexicanen_game_active') === 'true') {
                 scores = JSON.parse(localStorage.getItem('mexicanen_current_scores')) || {};
@@ -640,16 +616,14 @@
             }
         }
 
-        // --- SERVICE WORKER REGISTRATION ---
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('Service Worker geregistreerd!', reg.scope))
+                    .then(reg => console.log('Service Worker geregistreerd!'))
                     .catch(err => console.log('Service Worker gefaald:', err));
             });
         }
 
-        // Run Initializers
         renderSetupPlayers();
         initResizableLog();
         checkAndRestoreActiveGame();

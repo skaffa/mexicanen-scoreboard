@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Mexicanen Pro">
-    <link rel="apple-touch-icon" href="icon-512.png">
+    <link class="apple-touch-icon" href="icon-512.png">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -26,7 +26,7 @@
 
     <div id="custom-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-stone-900 border border-amber-600/40 rounded-2xl w-full max-w-sm p-5 shadow-2xl flex flex-col gap-4 text-center animate-modal">
-            <div id="modal-icon" class="text-3xl">🌵</div>
+            <div id="modal-icon" class="flex justify-center items-center"></div>
             <p id="modal-message" class="text-stone-200 font-bold text-sm leading-relaxed"></p>
             <input type="number" id="modal-input" class="hidden bg-stone-800 border border-stone-700 rounded-lg px-3 py-2.5 text-white font-black text-center focus:outline-none focus:ring-2 focus:ring-amber-500 text-lg w-full">
             <div class="flex gap-2 justify-center mt-2">
@@ -60,16 +60,18 @@
             
             <div class="bg-stone-900 p-3 rounded-xl shadow-xl border border-amber-900/30 mb-4 flex flex-col gap-3">
                 <div>
-                    <label class="block text-[10px] font-bold text-amber-400 uppercase tracking-wider mb-1 flex items-center gap-1">
-                        🎯 Límite de puntos (Predeterminado 10)
+                    <label class="block text-[10px] font-bold text-amber-400 uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                        <svg class="w-3.5 h-3.5 text-amber-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>
+                        <span>Límite de puntos (Predeterminado 10)</span>
                     </label>
                     <input type="number" id="target-score-input" value="10" min="1" max="99"
                         class="w-20 bg-stone-800 border border-stone-700 rounded-lg px-3 py-1.5 text-white font-bold text-center focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm">
                 </div>
 
                 <div>
-                    <label class="block text-[10px] font-bold text-amber-400 uppercase tracking-wider mb-1 flex items-center gap-1">
-                        👤 Añadir Nuevo Jugador
+                    <label class="block text-[10px] font-bold text-amber-400 uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                        <svg class="w-3.5 h-3.5 text-amber-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                        <span>Añadir Nuevo Jugador</span>
                     </label>
                     <div class="flex gap-2">
                         <input type="text" id="player-input" placeholder="Nombre del jugador..." autocomplete="off"
@@ -91,7 +93,7 @@
         <div class="space-y-2 mt-4">
             <button onclick="startGame()" 
                 class="w-full bg-emerald-600 hover:bg-emerald-500 text-stone-950 font-black py-3 rounded-xl text-lg shadow-lg transition active:scale-95 uppercase tracking-widest border-b-4 border-emerald-800 flex justify-center items-center gap-2">
-                <span>¡Iniciar Fiesta! 🎉</span>
+                <span>¡Iniciar Fiesta!</span>
             </button>
             <button onclick="showScreen('history-screen')" 
                 class="w-full bg-stone-900 hover:bg-stone-800 text-amber-400 font-bold py-2.5 rounded-xl border border-stone-800 transition text-xs uppercase tracking-wider flex justify-center items-center gap-2">
@@ -108,7 +110,7 @@
                     <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
                         <path d="M12 22V2 M12 14h-3.5a2 2 0 0 1-2-2V8 M12 11h3.5a2 2 0 0 0 2-2V5 M9 22h6 M9.5 8l1.5-1 M13 6l1.5 1" />
                     </svg>
-                    <span>¡El Scoreboard! 🌵</span>
+                    <span>¡El Scoreboard!</span>
                 </h1>
                 <span id="score-limit-display" class="text-[9px] bg-rose-950 text-rose-400 px-2 py-0.5 rounded-full border border-rose-800/60 font-bold uppercase tracking-wider">
                     Límite: 10
@@ -134,7 +136,7 @@
         <div class="mt-3 flex gap-2">
             <button onclick="undoLastAction()" title="Laatste actie ongedaan maken"
                 class="bg-stone-900 hover:bg-stone-800 text-stone-400 border border-stone-800 font-bold px-4 py-3 rounded-xl text-base shadow-lg transition active:scale-95 flex items-center justify-center">
-                <span>↩️</span>
+                <svg class="w-5 h-5 text-stone-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 0 1 0 12h-3"/></svg>
             </button>
             <button id="end-game-btn" onclick="endGame()" 
                 class="flex-1 bg-stone-800 text-stone-400 font-black py-3 rounded-xl text-sm shadow-lg transition uppercase tracking-widest border-b-4 border-stone-900 flex justify-center items-center gap-2">
@@ -147,7 +149,8 @@
     <div id="history-screen" class="w-full max-w-md mx-auto flex-1 flex flex-col justify-between hidden">
         <div>
             <h1 class="text-xl font-black text-center text-amber-500 my-4 tracking-wide uppercase flex items-center justify-center gap-2">
-                <span>El Muro de los Perdedores 💀</span>
+                <svg class="w-5 h-5 text-rose-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.8 1.6 5.1 4 6.3V19a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-3.7c2.4-1.2 4-3.5 4-6.3a7 7 0 0 0-7-7zm-2.5 7a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/></svg>
+                <span>El Muro de los Perdedores</span>
             </h1>
             
             <div id="history-container" class="space-y-2 max-h-[68vh] overflow-y-auto pr-1">
@@ -157,7 +160,8 @@
         <div class="space-y-2 mt-4">
             <button onclick="exportHistory()" 
                 class="w-full bg-amber-600 hover:bg-amber-500 text-stone-950 font-black py-3 rounded-xl shadow-lg transition active:scale-95 uppercase tracking-wider flex justify-center items-center gap-2 border-b-4 border-amber-800 text-sm">
-                <span>📥 Exportar para Python (JSON)</span>
+                <svg class="w-4 h-4 text-stone-950 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                <span>Exportar para Python (JSON)</span>
             </button>
             <div class="flex gap-2">
                 <button onclick="showScreen('setup-screen')" 
@@ -181,6 +185,21 @@
         let targetScore = 10; 
         let history = JSON.parse(localStorage.getItem('mexicanen_timeline_history')) || [];
 
+        // --- CENTRAL MATERIAL SVG DICTIONARY FOR MODALS ---
+        const ICONS = {
+            target: `<svg class="w-9 h-9 text-amber-500 mx-auto" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>`,
+            person: `<svg class="w-9 h-9 text-amber-500 mx-auto" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>`,
+            group: `<svg class="w-9 h-9 text-amber-500 mx-auto" fill="currentColor" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 1.34 5 3s1.34 3 8 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>`,
+            dice: `<svg class="w-9 h-9 text-amber-500 mx-auto" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.3" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1.3" fill="currentColor"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/></svg>`,
+            undo: `<svg class="w-9 h-9 text-stone-400 mx-auto" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 0 1 0 12h-3"/></svg>`,
+            skull: `<svg class="w-9 h-9 text-rose-500 mx-auto" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.8 1.6 5.1 4 6.3V19a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-3.7c2.4-1.2 4-3.5 4-6.3a7 7 0 0 0-7-7zm-2.5 7a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/></svg>`,
+            help: `<svg class="w-9 h-9 text-amber-500 mx-auto" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path stroke-linecap="round" d="M12 16h.01M12 7a3 3 0 0 1 3 3c0 2-3 3-3 3"/></svg>`,
+            trash: `<svg class="w-9 h-9 text-rose-500 mx-auto" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0 1 16.138 21H7.862a2 2 0 0 1-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v3M4 7h16"/></svg>`,
+            box: `<svg class="w-9 h-9 text-amber-500 mx-auto" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-14L4 7m8 4v10M4 7v10l8 4"/></svg>`,
+            warning: `<svg class="w-9 h-9 text-rose-500 mx-auto" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>`,
+            cactus: `<svg class="w-9 h-9 text-emerald-500 mx-auto" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 22V2 M12 14h-3.5a2 2 0 0 1-2-2V8 M12 11h3.5a2 2 0 0 0 2-2V5 M9 22h6 M9.5 8l1.5-1 M13 6l1.5 1" /></svg>`
+        };
+
         function showScreen(screenId) {
             document.getElementById('setup-screen').classList.add('hidden');
             document.getElementById('game-screen').classList.add('hidden');
@@ -190,8 +209,8 @@
             if (screenId === 'history-screen') renderHistory();
         }
 
-        // --- NEW: SYSTEM FOR CUSTOM DIALOG MODALS (ALERT, CONFIRM, PROMPT) ---
-        function showModal({ message, icon = '🌵', type = 'alert', defaultValue = '' }) {
+        // --- UPDATED: SYSTEM FOR CUSTOM DIALOG MODALS WITH SVGs ---
+        function showModal({ message, icon = 'cactus', type = 'alert', defaultValue = '' }) {
             return new Promise((resolve) => {
                 const modal = document.getElementById('custom-modal');
                 const msgEl = document.getElementById('modal-message');
@@ -201,7 +220,7 @@
                 const btnConfirm = document.getElementById('modal-btn-confirm');
 
                 msgEl.innerText = message;
-                iconEl.innerText = icon;
+                iconEl.innerHTML = ICONS[icon] || ICONS['cactus'];
                 
                 inputEl.classList.add('hidden');
                 btnCancel.classList.add('hidden');
@@ -216,7 +235,7 @@
                     btnCancel.classList.remove('hidden');
                     btnCancel.innerText = 'Cancelar';
                     btnConfirm.innerText = 'Aceptar';
-                    setTimeout(() => inputEl.focus(), 50); // Auto focus input
+                    setTimeout(() => inputEl.focus(), 50); 
                 } else {
                     btnConfirm.innerText = '¡Órale!';
                 }
@@ -321,8 +340,8 @@
             list.innerHTML = players.map(player => `
                 <li class="flex justify-between items-center bg-stone-900 px-3 py-2 rounded-lg border border-stone-800 shadow-sm">
                     <span class="font-bold text-sm text-stone-200">${player}</span>
-                    <button onclick="removePlayer('${player}')" class="text-rose-500 hover:text-rose-400 px-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                    <button onclick="removePlayer('${player}')" class="text-rose-500 hover:text-rose-400 px-2 flex items-center justify-center">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
                     </button>
                 </li>
             `).join('');
@@ -331,7 +350,7 @@
         // --- LÓGICA DEL JUEGO ---
         async function startGame() {
             if (players.length === 0) {
-                await showModal({ message: '¡No puedes jugar sin amigos! Añade jugadores.', icon: '👥' });
+                await showModal({ message: '¡No puedes jugar sin amigos! Añade jugadores.', icon: 'group' });
                 return;
             }
             
@@ -365,7 +384,7 @@
         async function updateScoreCustom(player) {
             const userInput = await showModal({ 
                 message: `¿Cuántos puntos recibe o pierde ${player}?`, 
-                icon: '🎲', 
+                icon: 'dice', 
                 type: 'prompt',
                 defaultValue: '1'
             });
@@ -384,7 +403,7 @@
                 renderScoreboard();
                 renderLiveFeed();
             } else {
-                await showModal({ message: '¡No hay acciones para deshacer, amigo!', icon: '↩️' });
+                await showModal({ message: '¡No hay acciones para deshacer, amigo!', icon: 'undo' });
             }
         }
 
@@ -397,7 +416,7 @@
                 eventText = `<span class="text-stone-300 font-medium">${player}</span> recibe <span class="text-stone-400 font-bold">+1 Punto</span>`;
             } else if (amount === 2) {
                 iconSvg = `<svg class="w-3.5 h-3.5 text-orange-500" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M2 18h20 M2 18c0-2 4-3.5 10-3.5s10 1.5 10 3.5 M7 15.5l1.5-6A2 2 0 0 1 10.5 8h3a2 2 0 0 1 2 1.5l1.5 6.5 M8.5 13h7" /></svg>`;
-                eventText = `<span class="text-stone-300 font-medium">${player}</span> ¡sufre un <span class="text-amber-500 font-bold">MEXICANO! 🌵</span>`;
+                eventText = `<span class="text-stone-300 font-medium">${player}</span> ¡sufre un <span class="text-amber-500 font-bold">MEXICANO!</span>`;
             } else if (amount > 0) {
                 iconSvg = `<svg class="w-3.5 h-3.5 text-red-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>`;
                 eventText = `<span class="text-stone-300 font-medium">${player}</span> recibe <span class="text-red-500 font-black">+${amount} Puntos</span>`;
@@ -456,7 +475,7 @@
             const endBtn = document.getElementById('end-game-btn');
             if (limitReached) {
                 endBtn.className = "flex-1 bg-rose-600 hover:bg-rose-500 text-stone-950 font-black py-3 rounded-xl text-base shadow-lg transition uppercase tracking-widest border-b-4 border-rose-800 animate-bounce flex justify-center items-center gap-2";
-                endBtn.innerHTML = `<span>¡TERMINAR JUEGO! 💀</span>`;
+                endBtn.innerHTML = `<span>¡TERMINAR JUEGO!</span>`;
             } else {
                 endBtn.className = "flex-1 bg-stone-800 hover:bg-stone-700 text-stone-400 font-black py-3 rounded-xl text-sm shadow-lg transition uppercase tracking-widest border-b-4 border-stone-900";
                 endBtn.innerHTML = "<span>Terminar Ronda</span>";
@@ -477,7 +496,7 @@
             if (!loser) {
                 const confirmEnd = await showModal({ 
                     message: `Nadie ha llegado a ${targetScore} puntos. ¿Seguro que el juego ha terminado?`, 
-                    icon: '🤔', 
+                    icon: 'help', 
                     type: 'confirm' 
                 });
                 if (!confirmEnd) return;
@@ -501,7 +520,7 @@
             history.unshift(session);
             localStorage.setItem('mexicanen_timeline_history', JSON.stringify(history));
 
-            await showModal({ message: `¡Ay caramba! ¡${loser} ha perdido el juego con ${scores[loser]} puntos! 💀`, icon: '💀' });
+            await showModal({ message: `¡Ay caramba! ¡${loser} ha perdido el juego con ${scores[loser]} puntos!`, icon: 'skull' });
             clearActiveGame(); 
             showScreen('history-screen');
         }
@@ -531,14 +550,14 @@
                         </div>
                         
                         <button onclick="deleteHistoryItem(${session.id})" title="Borrar juego"
-                            class="absolute top-2 right-2 text-stone-500 hover:text-rose-500 text-xs transition p-1">
-                            ❌
+                            class="absolute top-2 right-2 text-stone-500 hover:text-rose-500 transition p-1 flex items-center justify-center">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
                         </button>
 
                         <div class="text-xs font-medium text-stone-300 truncate mb-2 leading-tight">${scoreString}</div>
                         
                         <button onclick="toggleChart('${session.id}')" 
-                            class="w-full bg-stone-800 hover:bg-stone-700 text-amber-500 font-bold py-1.5 rounded-lg text-[10px] uppercase tracking-wider transition flex justify-center items-center gap-1">
+                            class="w-full bg-stone-800 hover:bg-stone-750 text-amber-500 font-bold py-1.5 rounded-lg text-[10px] uppercase tracking-wider transition flex justify-center items-center gap-1">
                             <span>¡Ver historial de juego! (Gráfico)</span>
                         </button>
                         <div id="chart-container-${session.id}" class="hidden mt-2 pt-2 border-t border-stone-800 h-56">
@@ -550,7 +569,7 @@
         }
 
         async function deleteHistoryItem(id) {
-            const confirmDelete = await showModal({ message: '¿Seguro que quieres borrar este juego del El Muro? 💀', icon: '🗑️', type: 'confirm' });
+            const confirmDelete = await showModal({ message: '¿Seguro que quieres borrar este juego del El Muro?', icon: 'trash', type: 'confirm' });
             if (confirmDelete) {
                 if (activeCharts[id]) {
                     activeCharts[id].destroy();
@@ -623,7 +642,7 @@
         }
 
         async function clearHistory() {
-            const confirmClear = await showModal({ message: '¿Seguro que quieres borrar todo el historial? 💀', icon: '💥', type: 'confirm' });
+            const confirmClear = await showModal({ message: '¿Seguro que quieres borrar todo el historial?', icon: 'warning', type: 'confirm' });
             if (confirmClear) {
                 Object.values(activeCharts).forEach(chart => chart.destroy());
                 activeCharts = {};
@@ -635,7 +654,7 @@
 
         async function exportHistory() {
             if (history.length === 0) {
-                await showModal({ message: '¡No hay datos para exportar, amigo!', icon: '📦' });
+                await showModal({ message: '¡No hay datos para exportar, amigo!', icon: 'box' });
                 return;
             }
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(history, null, 2));

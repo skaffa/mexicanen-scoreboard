@@ -9,9 +9,10 @@
 
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Mexicanen">
-    <link rel="apple-touch-icon" href="icon-192.png">
+    <meta name="apple-mobile-web-app-title" content="Mexicanen Pro">
+    <link rel="apple-touch-icon" href="icon-512.png">
 
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -175,14 +176,34 @@
 
         // --- NEW: Dynamic Color Interpolation (Green to Red) ---
         function getScoreColor(score, target) {
-            const p = Math.min(1, Math.max(0, score / target));
-            // Verloop van Emerald-500 (16, 185, 129) naar Rose-500 (244, 63, 94)
-            const r = Math.round(16 + (244 - 16) * p);
-            const g = Math.round(185 + (63 - 185) * p);
-            const b = Math.round(129 + (94 - 129) * p);
+            let p = Math.min(1, Math.max(0, score / target));
+            let r, g, b;
+        
+            if (p <= 0.33) {
+                // Stop 1: Groen naar Geel
+                // Verloop van Emerald-500 (16, 185, 129) naar Amber-500 (234, 179, 8)
+                let stopP = p / 0.33;
+                r = Math.round(16 + (234 - 16) * stopP);
+                g = Math.round(185 + (179 - 185) * stopP);
+                b = Math.round(129 + (8 - 129) * stopP);
+            } else if (p <= 0.66) {
+                // Stop 2: Geel naar Oranje
+                // Verloop van Amber-500 (234, 179, 8) naar Orange-500 (249, 115, 22)
+                let stopP = (p - 0.33) / 0.33;
+                r = Math.round(234 + (249 - 234) * stopP);
+                g = Math.round(179 + (115 - 179) * stopP);
+                b = Math.round(8 + (22 - 8) * stopP);
+            } else {
+                // Stop 3: Oranje naar Rood
+                // Verloop van Orange-500 (249, 115, 22) naar Rose-500 (244, 63, 94)
+                let stopP = (p - 0.66) / 0.34; // Resterende 34%
+                r = Math.round(249 + (244 - 249) * stopP);
+                g = Math.round(115 + (63 - 115) * stopP);
+                b = Math.round(22 + (94 - 22) * stopP);
+            }
+        
             return `rgb(${r}, ${g}, ${b})`;
         }
-
         // --- NEW: Mid-game persistence storage ---
         function saveActiveGame() {
             localStorage.setItem('mexicanen_game_active', 'true');

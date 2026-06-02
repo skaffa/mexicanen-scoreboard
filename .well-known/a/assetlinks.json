@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "io.github.skaffa.mex",
+      "sha256_cert_fingerprints": [
+        "39:2D:DA:2C:9D:D5:AB:47:B6:88:3A:84:98:43:76:08:87:BA:12:A1:FE:DA:E1:1C:A1:0E:7D:68:B5:B2:6F:EF"
+      ]
+    }
+  }
+]

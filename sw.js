@@ -1,6 +1,6 @@
 // --- CACHE UPDATE VERSION CONTROL ---
 // Zorg dat deze v3 (of hoger) ALTIJD meestijgt als je de APP_VERSION in index.html ophoogt!
-const CACHE_NAME = 'mexicanen-cache-v4';
+const CACHE_NAME = 'mexicanen-cache-v5';
 
 const ASSETS_TO_CACHE = [
   './',

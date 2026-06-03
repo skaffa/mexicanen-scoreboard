@@ -22,7 +22,29 @@
         .animate-modal { animation: fadeIn 0.15s ease-out forwards; }
     </style>
 </head>
-<body class="bg-stone-950 text-stone-100 font-sans min-h-screen flex flex-col justify-between p-3 select-none">
+<body class="bg-stone-950 text-stone-100 font-sans h-[100dvh] flex flex-col justify-between p-3 select-none overflow-hidden relative">
+
+    <button onclick="openDebugModal()" class="absolute top-3 right-3 text-stone-700 hover:text-stone-500 z-40 text-[10px] font-mono tracking-widest bg-stone-900/40 px-2 py-1 rounded border border-stone-850/60 transition">
+        DBG
+    </button>
+
+    <div id="debug-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-stone-900 border border-indigo-600/40 rounded-2xl w-full max-w-sm p-5 shadow-2xl flex flex-col gap-4 text-center animate-modal">
+            <h3 class="text-indigo-400 font-black tracking-wider uppercase text-sm">Panel de Depuración</h3>
+            <div class="text-left text-xs font-mono space-y-2 bg-stone-950 p-3 rounded-lg border border-stone-800 text-stone-300">
+                <div>HTML Ver: <span id="debug-html-version" class="text-emerald-400"></span></div>
+                <div>SW Status: <span class="text-amber-400">Active (Cache Verified)</span></div>
+                <div>Sessies Totaal: <span id="debug-total-sessions" class="text-indigo-400"></span></div>
+                <div>Spelers Totaal: <span id="debug-total-players" class="text-indigo-400"></span></div>
+            </div>
+            <button onclick="copyLocalStorageToClipboard()" class="w-full bg-indigo-700 hover:bg-indigo-600 text-white font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider transition active:scale-95">
+                Kopieer LocalStorage Save
+            </button>
+            <button onclick="closeDebugModal()" class="w-full bg-stone-800 hover:bg-stone-750 text-stone-400 font-bold py-2 rounded-xl text-xs uppercase tracking-wider transition">
+                Cerrar
+            </button>
+        </div>
+    </div>
 
     <div id="custom-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-stone-900 border border-amber-600/40 rounded-2xl w-full max-w-sm p-5 shadow-2xl flex flex-col gap-4 text-center animate-modal">
@@ -36,8 +58,8 @@
         </div>
     </div>
 
-    <div id="setup-screen" class="w-full max-w-md mx-auto flex-1 flex flex-col justify-between">
-        <div>
+    <div id="setup-screen" class="w-full max-w-md mx-auto h-full flex flex-col justify-between min-h-0">
+        <div class="flex-1 flex flex-col min-h-0 overflow-y-auto pr-1">
             <div class="text-center my-3">
                 <div class="flex justify-center items-center gap-3 mb-2">
                     <svg class="w-7 h-7 text-emerald-500" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 2v20 M9 22h6 M12 13h-4a2 2 0 0 1-2-2V8 M12 10h4a2 2 0 0 0 2-2V5" /></svg>
@@ -75,12 +97,19 @@
                 </div>
             </div>
 
+            <div id="paused-sessions-container" class="mb-4 hidden bg-amber-950/20 border border-amber-900/40 p-3 rounded-xl">
+                <h2 class="text-xs font-black uppercase tracking-wider mb-2 text-amber-500 flex items-center gap-1.5">
+                    <svg class="w-3.5 h-3.5 text-amber-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25v13.5m-7.5-13.5v13.5" /></svg>
+                    <span>Hervat Gepauzeerde Spellen</span>
+                </h2>
+                <ul id="paused-sessions-list" class="space-y-1.5 max-h-32 overflow-y-auto pr-1"></ul>
+            </div>
+
             <h2 class="text-xs font-bold uppercase tracking-wider mb-2 text-stone-400">Jugadores en la mesa (La Lista Negra):</h2>
-            <ul id="player-list" class="space-y-1.5 max-h-48 overflow-y-auto pr-1">
-                </ul>
+            <ul id="player-list" class="space-y-1.5"></ul>
         </div>
 
-        <div class="space-y-2 mt-4">
+        <div class="space-y-2 mt-4 flex-shrink-0">
             <button onclick="startGame()" 
                 class="w-full bg-emerald-700 hover:bg-emerald-600 text-stone-100 font-black py-3 rounded-xl text-lg shadow-lg transition active:scale-95 uppercase tracking-widest border-b-4 border-emerald-900 flex justify-center items-center gap-2">
                 <span>¡Iniciar Fiesta!</span>
@@ -98,34 +127,34 @@
         </div>
     </div>
 
-
-    <div id="game-screen" class="w-full max-w-md mx-auto flex-1 flex flex-col justify-between hidden">
-        <div>
+    <div id="game-screen" class="w-full max-w-md mx-auto h-full flex flex-col justify-between min-h-0 hidden">
+        <div class="flex-1 flex flex-col min-h-0">
             <div class="flex justify-between items-center my-2 border-b border-stone-800 pb-1.5 relative">
                 <h1 class="text-lg font-black text-amber-500 uppercase tracking-wider flex items-center gap-1">
                     <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 2v20 M9 22h6 M12 13h-4a2 2 0 0 1-2-2V8 M12 10h4a2 2 0 0 0 2-2V5" /></svg>
                     <span>¡El Scoreboard!</span>
                 </h1>
-                <span id="score-limit-display" class="text-[9px] bg-rose-950 text-rose-400 px-2 py-0.5 rounded-full border border-rose-800/60 font-bold uppercase tracking-wider">Límite: 10</span>
+                <span id="score-limit-display" class="text-[9px] bg-rose-950 text-rose-400 px-2 py-0.5 rounded-full border border-rose-800/60 font-bold uppercase tracking-wider mr-6">Límite: 10</span>
                 <div class="absolute -bottom-1 left-0 right-0 h-1 bg-gradient-to-r from-emerald-800 via-rose-800 via-amber-700 to-indigo-800 rounded"></div>
             </div>
             
-            <div id="scoreboard-container" class="space-y-1.5 max-h-[50vh] overflow-y-auto pr-1 mt-2">
-                </div>
+            <div id="scoreboard-container" class="space-y-1.5 flex-1 min-h-0 overflow-y-auto pr-1 mt-2"></div>
 
-            <div class="mt-3 bg-stone-900/60 border border-stone-800/80 rounded-xl p-2 flex flex-col">
+            <div class="mt-3 bg-stone-900/60 border border-stone-800/80 rounded-xl p-2 flex flex-col flex-shrink-0">
                 <h3 class="text-[10px] font-bold text-stone-400 uppercase tracking-wider mb-1">Registro de Acciones</h3>
-                <div id="live-log-container" class="space-y-1 max-h-24 overflow-y-auto text-[11px] pr-1 select-none">
-                    </div>
+                <div id="live-log-container" class="space-y-1 max-h-24 overflow-y-auto text-[11px] pr-1 select-none"></div>
                 <div id="log-resizer" class="h-2.5 cursor-ns-resize bg-stone-800/50 hover:bg-amber-500/40 transition-colors rounded mt-2 flex items-center justify-center touch-none">
                     <div class="w-8 h-0.5 bg-stone-600 rounded"></div>
                 </div>
             </div>
         </div>
 
-        <div class="mt-3 flex gap-2">
+        <div class="mt-3 flex gap-2 flex-shrink-0">
             <button onclick="undoLastAction()" class="bg-stone-900 hover:bg-stone-800 text-stone-400 border border-stone-800 font-bold px-4 py-3 rounded-xl text-base shadow-lg transition active:scale-95 flex items-center justify-center">
                 <svg class="w-5 h-5 text-stone-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 0 1 0 12h-3"/></svg>
+            </button>
+            <button onclick="pauseGame()" class="bg-amber-700/20 hover:bg-amber-700/30 text-amber-500 border border-amber-900/40 font-black px-4 py-3 rounded-xl text-xs uppercase tracking-wider transition active:scale-95 flex items-center justify-center gap-1">
+                Pausar
             </button>
             <button id="end-game-btn" onclick="endGame()" class="flex-1 bg-stone-800 text-stone-400 font-black py-3 rounded-xl text-sm shadow-lg transition uppercase tracking-widest border-b-4 border-stone-900 flex justify-center items-center gap-2">
                 <span>Terminar Ronda</span>
@@ -133,16 +162,15 @@
         </div>
     </div>
 
-
-    <div id="history-screen" class="w-full max-w-md mx-auto flex-1 flex flex-col justify-between hidden">
-        <div>
+    <div id="history-screen" class="w-full max-w-md mx-auto h-full flex flex-col justify-between min-h-0 hidden">
+        <div class="flex-1 flex flex-col min-h-0">
             <h1 class="text-xl font-black text-center text-amber-500 my-4 tracking-wide uppercase flex items-center justify-center gap-2">
                 <svg class="w-5 h-5 text-rose-700" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="10" r="7"/><path d="M9 16h6v4a3 3 0 0 1-3 3 3 3 0 0 1-3-3v-4z"/><circle cx="10.5" cy="9.5" r="1.2" fill="black"/><circle cx="13.5" cy="9.5" r="1.2" fill="black"/></svg>
                 <span>El Muro de los Perdedores</span>
             </h1>
-            <div id="history-container" class="space-y-2 max-h-[68vh] overflow-y-auto pr-1"></div>
+            <div id="history-container" class="flex-1 min-h-0 overflow-y-auto pr-1 space-y-2"></div>
         </div>
-        <div class="space-y-2 mt-4">
+        <div class="space-y-2 mt-4 flex-shrink-0">
             <button onclick="exportHistory()" class="w-full bg-amber-700 hover:bg-amber-600 text-stone-100 font-black py-3 rounded-xl shadow-lg transition text-sm uppercase tracking-wider flex justify-center items-center gap-2 border-b-4 border-amber-900">
                 <span>Exportar para Python (JSON)</span>
             </button>
@@ -157,15 +185,14 @@
         </div>
     </div>
 
-
-    <div id="stats-screen" class="w-full max-w-md mx-auto flex-1 flex flex-col justify-between hidden">
+    <div id="stats-screen" class="w-full max-w-md mx-auto h-full flex flex-col justify-between min-h-0 hidden">
         <div class="flex-1 flex flex-col min-h-0">
             <h1 class="text-xl font-black text-center text-indigo-400 my-3 tracking-wide uppercase flex items-center justify-center gap-2">
-                <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v5.25c0 .621-.504 1.125-1.125 1.125h-2.25A1.125 1.125 0 013 18.375v-5.25zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125v-9.75zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v14.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" /></svg>
+                <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v5.25c0 .621-.504 1.125-1.125 1.125h-2.25A1.125 1.125 0 013 18.375v-5.25zM9.75 8.625c0-.621.504-1.125 1.125-1.125h-2.25c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125v-9.75zM16.5 4.125c0-.621.504-1.125 1.125-1.125h-2.25C20.496 3 21 3.504 21 4.125v14.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" /></svg>
                 <span>Estadísticas e Impacto</span>
             </h1>
 
-            <div class="flex-1 overflow-y-auto pr-1 space-y-4 custom-scroll max-h-[72vh]">
+            <div class="flex-1 overflow-y-auto pr-1 space-y-4 custom-scroll">
                 <div class="bg-stone-900 p-3 rounded-xl border border-stone-800 shadow-sm">
                     <h3 class="text-[10px] font-bold text-stone-400 uppercase tracking-wider mb-2 text-center">Gráfico: Mexicanos vs Derrotas</h3>
                     <div class="h-48 relative">
@@ -182,13 +209,12 @@
                                    <th class="pb-1.5">Jugador</th>
                                    <th class="pb-1.5 text-center">Partidas</th>
                                    <th class="pb-1.5 text-center text-rose-500">Derrotas</th>
-                                   <th class="pb-1.5 text-center text-amber-500">Mex</th>
+                                   <th class="pb-1.5 text-center text-amber-500">Mex+</th>
                                    <th class="pb-1.5 text-center">Pts</th>
                                    <th class="pb-1.5 text-right text-emerald-400">Seg%</th>
                                </tr>
                             </thead>
-                            <tbody id="global-stats-tbody" class="divide-y divide-stone-800/60 font-medium text-stone-300">
-                                </tbody>
+                            <tbody id="global-stats-tbody" class="divide-y divide-stone-800/60 font-medium text-stone-300"></tbody>
                         </table>
                     </div>
                 </div>
@@ -196,13 +222,12 @@
                 <div class="bg-stone-900 p-3 rounded-xl border border-stone-800 shadow-sm">
                     <h3 class="text-[10px] font-bold text-indigo-400 uppercase tracking-wider mb-1">Gestión de Alias (Unificar Nombres)</h3>
                     <p class="text-[10px] text-stone-500 mb-3 leading-tight">Une múltiples nombres/errores bajo una sola identidad para fusionar sus datos.</p>
-                    <div id="alias-manager-list" class="space-y-2">
-                        </div>
+                    <div id="alias-manager-list" class="space-y-2"></div>
                 </div>
             </div>
         </div>
 
-        <div class="mt-3">
+        <div class="mt-3 flex-shrink-0">
             <button onclick="showScreen('setup-screen')" class="w-full bg-stone-900 hover:bg-stone-800 text-stone-200 font-bold py-2.5 rounded-xl border border-stone-800 transition uppercase tracking-wider text-xs">
                 <span>Volver al Menú</span>
             </button>
@@ -211,7 +236,7 @@
 
     <script>
         // --- CACHE UPDATE VERSION CHECK ---
-        const APP_VERSION = "1.3.0"; 
+        const APP_VERSION = "1.4.0"; 
 
         function checkVersionUpdate() {
             const cachedVersion = localStorage.getItem('mexicanen_version');
@@ -251,6 +276,25 @@
             cactus: `<svg class="w-9 h-9 text-emerald-500 mx-auto" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 2v20 M9 22h6 M12 13h-4a2 2 0 0 1-2-2V8 M12 10h4a2 2 0 0 0 2-2V5" /></svg>`
         };
 
+        // --- DEBUG PANEL LOGIC ---
+        function openDebugModal() {
+            document.getElementById('debug-html-version').innerText = APP_VERSION;
+            document.getElementById('debug-total-sessions').innerText = history.length;
+            document.getElementById('debug-total-players').innerText = players.length;
+            document.getElementById('debug-modal').classList.remove('hidden');
+        }
+        function closeDebugModal() {
+            document.getElementById('debug-modal').classList.add('hidden');
+        }
+        function copyLocalStorageToClipboard() {
+            const backup = JSON.stringify(localStorage, null, 2);
+            navigator.clipboard.writeText(backup).then(() => {
+                alert('¡LocalStorage Save succesvol naar klembord gekopieerd!');
+            }).catch(err => {
+                alert('Error al copiar: ' + err);
+            });
+        }
+
         // --- ALIAS RESOLVER ---
         function resolveAlias(name) {
             if (!name) return "Anonimato";
@@ -263,6 +307,7 @@
             document.getElementById('history-screen').classList.add('hidden');
             document.getElementById('stats-screen').classList.add('hidden');
             document.getElementById(screenId).classList.remove('hidden');
+            if (screenId === 'setup-screen') { renderSetupPlayers(); renderPausedSessionsList(); }
             if (screenId === 'history-screen') renderHistory();
             if (screenId === 'stats-screen') renderGlobalStatsPage();
         }
@@ -380,6 +425,75 @@
             `).join('');
         }
 
+        // --- PAUSE & RESUME LOGIC ---
+        async function pauseGame() {
+            const confirmPause = await showModal({ message: '¿Pausar partida para continuarla más tarde?', icon: 'box', type: 'confirm' });
+            if (!confirmPause) return;
+
+            const pauseSnapshot = JSON.parse(JSON.stringify(scores));
+            pauseSnapshot._isPause = true; 
+            gameTimeline.push(pauseSnapshot);
+
+            const timestamp = new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            currentRoundLog.push({ timestamp, iconSvg: ICONS['box'], eventText: `<span class="text-amber-500 font-bold">⏸ PARTIDA PAUSADA</span>` });
+
+            const session = {
+                id: Date.now(), game: "Mexicanen", status: "paused",
+                date: new Date().toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' }),
+                scores: { ...scores }, loser: null, targetScore: targetScore, timeline: gameTimeline, log: currentRoundLog 
+            };
+
+            history.unshift(session);
+            localStorage.setItem('mexicanen_timeline_history', JSON.stringify(history));
+            
+            clearActiveGame();
+            showScreen('setup-screen');
+        }
+
+        function renderPausedSessionsList() {
+            const container = document.getElementById('paused-sessions-container');
+            const list = document.getElementById('paused-sessions-list');
+            const pausedItems = history.filter(s => s.status === 'paused');
+
+            if (pausedItems.length === 0) {
+                container.classList.add('hidden');
+                return;
+            }
+            container.classList.remove('hidden');
+            list.innerHTML = pausedItems.map(s => `
+                <li class="flex justify-between items-center bg-stone-950 px-2.5 py-1.5 rounded-lg border border-amber-900/30 shadow-sm">
+                    <div class="flex-1 min-w-0">
+                        <div class="text-[8px] text-stone-500 font-mono">${s.date} (Límite: ${s.targetScore})</div>
+                        <div class="text-xs font-bold text-stone-200 truncate">${Object.keys(s.scores).join(', ')}</div>
+                    </div>
+                    <button onclick="resumeGame(${s.id})" class="bg-amber-600 hover:bg-amber-500 text-stone-950 font-black px-2.5 py-1 rounded-md text-[10px] uppercase tracking-wider transition active:scale-95">
+                        Hervat
+                    </button>
+                </li>
+            `).join('');
+        }
+
+        function resumeGame(id) {
+            const idx = history.findIndex(s => s.id === id);
+            if (idx === -1) return;
+            const session = history[idx];
+
+            scores = session.scores;
+            gameTimeline = session.timeline;
+            currentRoundLog = session.log || [];
+            targetScore = session.targetScore || 10;
+            players = Object.keys(scores);
+
+            history.splice(idx, 1);
+            localStorage.setItem('mexicanen_timeline_history', JSON.stringify(history));
+            document.getElementById('target-score-input').value = targetScore;
+            document.getElementById('score-limit-display').innerText = `Límite: ${targetScore}`;
+
+            saveActiveGame();
+            showScreen('game-screen');
+            renderLiveFeed();
+        }
+
         async function startGame() {
             if (players.length === 0) {
                 await showModal({ message: '¡No puedes jugar sin amigos! Añade jugadores.', icon: 'group' });
@@ -398,7 +512,6 @@
             
             saveActiveGame();
             showScreen('game-screen');
-            renderScoreboard();
         }
 
         function updateScore(player, amount) {
@@ -430,19 +543,24 @@
             }
         }
 
+        // --- UITGEBREIDE SOUNDBITE LOGGING ---
         function logLiveEvent(player, amount) {
             let iconSvg = ''; let eventText = '';
             if (amount === 1) {
                 iconSvg = `<svg class="w-3.5 h-3.5 text-stone-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg>`;
                 eventText = `<span class="text-stone-300 font-medium">${player}</span> recibe <span class="text-stone-400 font-bold">+1 Punto</span>`;
-            } else if ([2, 4, 8, 16].includes(amount)) {
+            } else if ([2, 3, 4, 5, 6, 7, 8, 16].includes(amount)) {
                 let term = ""; let colorClass = "text-amber-500";
-                if (amount === 2) { term = "MEXICANO"; colorClass = "text-amber-500"; }
-                else if (amount === 4) { term = "CHINO"; colorClass = "text-orange-500"; }
-                else if (amount === 8) { term = "RUSO"; colorClass = "text-rose-500"; }
+                if (amount === 2) { term = "MEXICANO"; colorClass = "text-amber-500 font-bold"; }
+                else if (amount === 3) { term = "BRAZILIAAN"; colorClass = "text-yellow-400 font-extrabold"; }
+                else if (amount === 4) { term = "CHINO"; colorClass = "text-orange-500 font-bold"; }
+                else if (amount === 5) { term = "AFGHAAN"; colorClass = "text-red-400 font-extrabold"; }
+                else if (amount === 6) { term = "KAAAANKER"; colorClass = "text-fuchsia-500 font-black tracking-tight"; }
+                else if (amount === 7) { term = "KAAAAANKER"; colorClass = "text-purple-600 font-black animate-pulse"; }
+                else if (amount === 8) { term = "RUSO"; colorClass = "text-rose-500 font-bold"; }
                 else if (amount === 16) { term = "IRANÍ"; colorClass = "text-red-500 font-black animate-pulse"; }
                 iconSvg = `<svg class="w-3.5 h-3.5 text-orange-600" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M2 18h20 M2 18c0-2 4-3.5 10-3.5s10 1.5 10 3.5 M7 15.5l1.5-6A2 2 0 0 1 10.5 8h3a2 2 0 0 1 2 1.5l1.5 6.5 M8.5 13h7" /></svg>`;
-                eventText = `<span class="text-stone-300 font-medium">${player}</span> ¡sufre un <span class="${colorClass} font-black">${term}!</span>`;
+                eventText = `<span class="text-stone-300 font-medium">${player}</span> ¡sufre un <span class="${colorClass}">${term}!</span>`;
             } else if (amount > 0) {
                 iconSvg = `<svg class="w-3.5 h-3.5 text-red-700" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>`;
                 eventText = `<span class="text-stone-300 font-medium">${player}</span> recibe <span class="text-red-700 font-black">+${amount} Puntos</span>`;
@@ -500,10 +618,10 @@
 
             const endBtn = document.getElementById('end-game-btn');
             if (limitReached) {
-                endBtn.className = "flex-1 bg-rose-700 hover:bg-rose-600 text-stone-100 font-black py-3 rounded-xl text-base shadow-lg transition uppercase tracking-widest border-b-4 border-rose-900 animate-bounce flex justify-center items-center gap-2";
+                endBtn.className = "flex-1 bg-rose-700 hover:bg-rose-600 text-stone-100 font-black py-3 rounded-xl text-base shadow-lg transition uppercase tracking-widest border-b-4 border-rose-900 animate-bounce flex justify-center items-center gap-2 flex-shrink-0";
                 endBtn.innerHTML = `<span>¡TERMINAR JUEGO!</span>`;
             } else {
-                endBtn.className = "flex-1 bg-stone-800 hover:bg-stone-700 text-stone-400 font-black py-3 rounded-xl text-sm shadow-lg transition uppercase tracking-widest border-b-4 border-stone-900";
+                endBtn.className = "flex-1 bg-stone-800 hover:bg-stone-700 text-stone-400 font-black py-3 rounded-xl text-sm shadow-lg transition uppercase tracking-widest border-b-4 border-stone-900 flex-shrink-0";
                 endBtn.innerHTML = "<span>Terminar Ronda</span>";
             }
         }
@@ -523,7 +641,7 @@
             }
 
             const session = {
-                id: Date.now(), game: "Mexicanen",
+                id: Date.now(), game: "Mexicanen", status: "completed",
                 date: new Date().toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' }),
                 scores: { ...scores }, loser: loser, targetScore: targetScore, timeline: gameTimeline 
             };
@@ -536,11 +654,13 @@
         function renderHistory() {
             activeCharts = {}; 
             const container = document.getElementById('history-container');
-            if (history.length === 0) {
+            const completedHistory = history.filter(s => s.status !== 'paused');
+
+            if (completedHistory.length === 0) {
                 container.innerHTML = `<div class="text-stone-700 text-center py-6 text-xs italic">El cementerio de perdedores está vacío...</div>`;
                 return;
             }
-            container.innerHTML = history.map(session => {
+            container.innerHTML = completedHistory.map(session => {
                 const scoreString = Object.entries(session.scores).map(([name, score]) => `${name}: ${score}`).join(', ');
                 return `
                     <div class="bg-stone-900 p-3 rounded-xl border border-stone-800 shadow-sm relative">
@@ -582,8 +702,10 @@
             if (activeCharts[id]) return;
             const session = history.find(s => s.id == id);
             const ctx = document.getElementById(`canvas-${id}`).getContext('2d');
-            const gamePlayers = Object.keys(session.timeline[0]);
-            const labels = session.timeline.map((_, i) => `Turno ${i}`);
+            const gamePlayers = Object.keys(session.timeline[0]).filter(k => !k.startsWith('_'));
+            
+            // Render Pause markers direct op de X-as
+            const labels = session.timeline.map((snapshot, i) => snapshot._isPause ? `⏸ Pausa` : `Turno ${i}`);
             const colors = ['#be185d', '#b45309', '#047857', '#1d4ed8', '#a16207', '#6b21a8'];
 
             const datasets = gamePlayers.map((player, idx) => ({
@@ -607,10 +729,11 @@
             });
         }
 
-        // --- ENGINe ALIAS & STATISTIEKEN GENEREREN (NIEUW) ---
+        // --- ALIAS LOGIC & GLOBAL STATS ---
         function getUniqueNamesEver() {
             let names = new Set(players);
             history.forEach(session => {
+                if (session.status === 'paused') return; // Negeer gepauzeerde games in stats!
                 if (session.scores) Object.keys(session.scores).forEach(n => names.add(n.trim()));
                 if (session.loser) names.add(session.loser.trim());
             });
@@ -621,7 +744,6 @@
             let stats = {};
             let uniqueRawNames = getUniqueNamesEver();
             
-            // Initialiseer alias structuren
             uniqueRawNames.forEach(rawName => {
                 let alias = resolveAlias(rawName);
                 if (!stats[alias]) {
@@ -630,6 +752,8 @@
             });
 
             history.forEach(session => {
+                if (session.status === 'paused') return; // ABSOLUUT NEGEREN IN GLOBALE STATS
+
                 let aliasesInGame = new Set();
                 if (session.scores) {
                     Object.keys(session.scores).forEach(n => aliasesInGame.add(resolveAlias(n)));
@@ -648,13 +772,14 @@
                         let prev = session.timeline[i-1];
                         let curr = session.timeline[i];
                         Object.keys(curr).forEach(pName => {
+                            if (pName.startsWith('_')) return;
                             let pAlias = resolveAlias(pName);
                             let diff = (curr[pName] || 0) - (prev[pName] || 0);
                             if (diff > 0 && stats[pAlias]) {
                                 stats[pAlias].points += diff;
-                                if (diff === 2) stats[pAlias].mexicanos += 1;
-                                else if (diff === 4) stats[pAlias].mexicanos += 2;
-                                else if (diff === 8) stats[pAlias].mexicanos += 3;
+                                if (diff === 2 || diff === 3) stats[pAlias].mexicanos += 1;
+                                else if (diff === 4 || diff === 5) stats[pAlias].mexicanos += 2;
+                                else if (diff === 6 || diff === 7 || diff === 8) stats[pAlias].mexicanos += 3;
                                 else if (diff === 16) stats[pAlias].mexicanos += 4;
                             }
                         });
@@ -673,22 +798,29 @@
                 aliases[rawName] = newAlias;
             }
             localStorage.setItem('mexicanen_aliases', JSON.stringify(aliases));
-            renderGlobalStatsPage(); // Refresh data live!
+            renderGlobalStatsPage(); 
             if (document.getElementById('game-screen').classList.contains('hidden') === false) renderScoreboard();
         }
 
         function renderGlobalStatsPage() {
             const data = calculateGlobalStats();
-            
-            // Sort op meeste verliezers / minst veilig
             data.sort((a, b) => b.lost - a.lost || b.mexicanos - a.mexicanos);
 
-            // 1. Render Tabel
+            // 1. Bereken totalen voor de nieuwe Totaal-rij
+            let totalPlayed = 0, totalLost = 0, totalMex = 0, totalPoints = 0;
+            data.forEach(s => {
+                totalPlayed += s.played;
+                totalLost += s.lost;
+                totalMex += s.mexicanos;
+                totalPoints += s.points;
+            });
+            let totalSafeRate = totalPlayed > 0 ? Math.round(((totalPlayed - totalLost) / totalPlayed) * 100) : 100;
+
             const tbody = document.getElementById('global-stats-tbody');
             if (data.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 italic text-stone-600">No hay partidas registradas aún.</td></tr>`;
             } else {
-                tbody.innerHTML = data.map(s => {
+                let rowsHtml = data.map(s => {
                     let safeRate = s.played > 0 ? Math.round(((s.played - s.lost) / s.played) * 100) : 100;
                     return `
                         <tr class="hover:bg-stone-900/40 transition-colors">
@@ -701,23 +833,32 @@
                         </tr>
                     `;
                 }).join('');
+
+                // Voeg de cumulatieve Totaal-rij toe
+                rowsHtml += `
+                    <tr class="border-t-2 border-stone-800 bg-stone-900/60 font-bold text-stone-100">
+                        <td class="py-2.5 font-black text-amber-500 uppercase tracking-wider">TOTAL</td>
+                        <td class="py-2.5 text-center">${totalPlayed}</td>
+                        <td class="py-2.5 text-center text-rose-500 font-black">${totalLost}</td>
+                        <td class="py-2.5 text-center text-amber-500">${totalMex}</td>
+                        <td class="py-2.5 text-center text-stone-300">${totalPoints}</td>
+                        <td class="py-2.5 text-right text-emerald-400 font-black">${totalSafeRate}%</td>
+                    </tr>
+                `;
+                tbody.innerHTML = rowsHtml;
             }
 
-            // 2. Render Keimooie Grafiek
+            // 2. Render Grafiek
             if (globalChartInstance) globalChartInstance.destroy();
             const ctx = document.getElementById('global-stats-chart').getContext('2d');
             
-            const labels = data.map(s => s.name);
-            const mexicanosData = data.map(s => s.mexicanos);
-            const derrotasData = data.map(s => s.lost);
-
             globalChartInstance = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: labels,
+                    labels: data.map(s => s.name),
                     datasets: [
-                        { label: 'Mexicanos', data: mexicanosData, backgroundColor: '#f59e0b', borderRadius: 4 },
-                        { label: 'Derrotas (Verloren)', data: derrotasData, backgroundColor: '#be185d', borderRadius: 4 }
+                        { label: 'Premium Worp', data: data.map(s => s.mexicanos), backgroundColor: '#f59e0b', borderRadius: 4 },
+                        { label: 'Derrotas (Verloren)', data: data.map(s => s.lost), backgroundColor: '#be185d', borderRadius: 4 }
                     ]
                 },
                 options: {
@@ -726,9 +867,7 @@
                         x: { grid: { display: false }, ticks: { color: '#a8a29e', font: { size: 10, weight: 'bold' } } },
                         y: { grid: { color: '#1c1917' }, ticks: { color: '#78716c', stepSize: 1, font: { size: 9 } } }
                     },
-                    plugins: {
-                        legend: { position: 'top', labels: { color: '#d6d3d1', font: { size: 10, weight: 'bold' } } }
-                    }
+                    plugins: { legend: { position: 'top', labels: { color: '#d6d3d1', font: { size: 10, weight: 'bold' } } } }
                 }
             });
 
@@ -797,10 +936,12 @@
                 targetScore = parseInt(localStorage.getItem('mexicanen_current_target'), 10) || 10;
                 document.getElementById('score-limit-display').innerText = `Límite: ${targetScore}`;
                 showScreen('game-screen'); renderScoreboard(); renderLiveFeed();
+            } else {
+                renderSetupPlayers();
+                renderPausedSessionsList();
             }
         }
 
-        renderSetupPlayers();
         initResizableLog();
         checkAndRestoreActiveGame();
     </script>

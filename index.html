@@ -24,14 +24,12 @@
 </head>
 <body class="bg-stone-950 text-stone-100 font-sans h-[100dvh] flex flex-col justify-between p-3 select-none overflow-hidden relative pt-8">
 
-    <!-- Debug Button: Hidden by default, activated via Easter Egg -->
     <button id="debug-btn" onclick="openDebugModal()" class="hidden absolute top-2 left-1/2 -translate-x-1/2 text-stone-600 hover:text-stone-400 z-40 text-[9px] font-mono tracking-widest bg-stone-900/60 px-2 py-0.5 rounded border border-stone-800 transition">
         DEBUG PANEL
     </button>
 
-    <!-- Debug Modal (English) -->
     <div id="debug-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-stone-900 border border-indigo-600/40 rounded-2xl w-full max-w-sm p-5 shadow-2xl flex flex-col gap-3 text-center animate-modal">
+        <div class="bg-stone-900 border border-indigo-600/40 rounded-2xl w-full max-w-sm p-5 shadow-2xl flex flex-col gap-2 text-center animate-modal max-h-[90vh] overflow-y-auto custom-scroll">
             <h3 class="text-indigo-400 font-black tracking-wider uppercase text-xs">Engine Debug Dashboard</h3>
             
             <div class="text-left text-[11px] font-mono space-y-1 bg-stone-950 p-3 rounded-lg border border-stone-800 text-stone-300">
@@ -41,10 +39,20 @@
                 <div>LOCALSTORAGE KEYS: <span id="debug-storage-keys" class="text-indigo-400"></span></div>
             </div>
 
-            <div class="flex flex-col gap-2 mt-2">
+            <div class="flex flex-col gap-1.5 mt-2">
                 <button onclick="copyLocalStorageToClipboard()" class="w-full bg-indigo-700 hover:bg-indigo-600 text-white font-bold py-2 rounded-xl text-[11px] uppercase tracking-wider transition active:scale-95">
                     Copy LocalStorage Save
                 </button>
+                <div class="grid grid-cols-2 gap-1.5">
+                    <button onclick="exportFullAppState()" class="bg-blue-800 hover:bg-blue-750 text-white font-bold py-2 rounded-xl text-[10px] uppercase tracking-wider transition active:scale-95">
+                        Export App (JSON)
+                    </button>
+                    <button onclick="triggerImportFile()" class="bg-purple-800 hover:bg-purple-750 text-white font-bold py-2 rounded-xl text-[10px] uppercase tracking-wider transition active:scale-95">
+                        Import App (JSON)
+                    </button>
+                </div>
+                <input type="file" id="debug-import-file" class="hidden" accept=".json" onchange="importAppState(this)">
+                
                 <button onclick="injectDummyData()" class="w-full bg-emerald-800 hover:bg-emerald-700 text-white font-bold py-2 rounded-xl text-[11px] uppercase tracking-wider transition active:scale-95">
                     Inject Mock History Data
                 </button>
@@ -55,7 +63,7 @@
                     Hide Debug Button Mode
                 </button>
                 <button onclick="wipeStorageAndReload()" class="w-full bg-rose-950/60 hover:bg-rose-900/60 text-rose-400 border border-rose-900/40 font-bold py-2 rounded-xl text-[11px] uppercase tracking-wider transition active:scale-95">
-                    Wipe Storage & Hard Reload
+                    Wipe Storage & Hard Reset
                 </button>
             </div>
 
@@ -65,7 +73,6 @@
         </div>
     </div>
 
-    <!-- Generic Custom Modal (Spanish) -->
     <div id="custom-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-stone-900 border border-amber-600/40 rounded-2xl w-full max-w-sm p-5 shadow-2xl flex flex-col gap-4 text-center animate-modal">
             <div id="modal-icon" class="flex justify-center items-center"></div>
@@ -78,7 +85,6 @@
         </div>
     </div>
 
-    <!-- MAIN SETUP SCREEN -->
     <div id="setup-screen" class="w-full max-w-md mx-auto h-full flex flex-col justify-between min-h-0">
         <div class="flex-1 flex flex-col min-h-0 overflow-y-auto pr-1">
             <div class="text-center my-2">
@@ -118,7 +124,6 @@
                 </div>
             </div>
 
-            <!-- PAUSED SESSIONS LIST -->
             <div id="paused-sessions-container" class="mb-4 hidden bg-amber-950/20 border border-amber-900/40 p-3 rounded-xl">
                 <h2 class="text-xs font-black uppercase tracking-wider mb-2 text-amber-500 flex items-center gap-1.5">
                     <svg class="w-3.5 h-3.5 text-amber-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25v13.5m-7.5-13.5v13.5" /></svg>
@@ -149,7 +154,6 @@
         </div>
     </div>
 
-    <!-- GAME SCOREBOARD SCREEN -->
     <div id="game-screen" class="w-full max-w-md mx-auto h-full flex flex-col justify-between min-h-0 hidden">
         <div class="flex-1 flex flex-col min-h-0">
             <div class="flex justify-between items-center my-2 border-b border-stone-800 pb-1.5 relative flex-shrink-0">
@@ -161,16 +165,14 @@
                 <div class="absolute -bottom-1 left-0 right-0 h-1 bg-gradient-to-r from-emerald-800 via-rose-800 via-amber-700 to-indigo-800 rounded"></div>
             </div>
             
-            <!-- SCOREBOARD PLAYER CARDS -->
-            <div id="scoreboard-container" class="space-y-2 flex-1 min-h-0 overflow-y-auto pr-1"></div>
+            <div id="scoreboard-container" class="space-y-1.5 flex-1 min-h-0 overflow-y-auto pr-1"></div>
 
-            <!-- ACTION LOG -->
             <div class="mt-3 bg-stone-900/60 border border-stone-800/80 rounded-xl p-2 flex flex-col flex-shrink-0">
                 <h3 class="text-[10px] font-bold text-stone-400 uppercase tracking-wider mb-1">Registro de Acciones</h3>
-                <div id="live-log-container" class="flex flex-col justify-end gap-1 max-h-24 overflow-y-auto text-[11px] pr-1 select-none"></div>
-                <div id="log-resizer" class="h-2.5 cursor-ns-resize bg-stone-800/50 hover:bg-amber-500/40 transition-colors rounded mt-2 flex items-center justify-center touch-none">
+                <div id="log-resizer" class="h-2.5 cursor-ns-resize bg-stone-800/50 hover:bg-amber-500/40 transition-colors rounded mb-1.5 flex items-center justify-center touch-none">
                     <div class="w-8 h-0.5 bg-stone-600 rounded"></div>
                 </div>
+                <div id="live-log-container" class="flex flex-col justify-end gap-1 max-h-24 overflow-y-auto text-[11px] pr-1 select-none"></div>
             </div>
         </div>
 
@@ -187,7 +189,6 @@
         </div>
     </div>
 
-    <!-- WALL OF SHAME HISTORY SCREEN -->
     <div id="history-screen" class="w-full max-w-md mx-auto h-full flex flex-col justify-between min-h-0 hidden">
         <div class="flex-1 flex flex-col min-h-0">
             <h1 onclick="handleHistoryHeaderClick()" class="text-xl font-black text-center text-amber-500 my-4 tracking-wide uppercase flex items-center justify-center gap-2 cursor-pointer select-none active:scale-98 transition">
@@ -211,7 +212,6 @@
         </div>
     </div>
 
-    <!-- GLOBAL STATS SCREEN -->
     <div id="stats-screen" class="w-full max-w-md mx-auto h-full flex flex-col justify-between min-h-0 hidden">
         <div class="flex-1 flex flex-col min-h-0">
             <h1 class="text-xl font-black text-center text-indigo-400 my-3 tracking-wide uppercase flex items-center justify-center gap-2">
@@ -262,7 +262,7 @@
     </div>
 
     <script>
-        const APP_VERSION = "1.6.2"; 
+        const APP_VERSION = "1.7.0"; 
 
         function checkVersionUpdate() {
             const cachedVersion = localStorage.getItem('mexicanen_version');
@@ -339,16 +339,60 @@
                 await showModal({ message: 'Error capturing dump: ' + err, icon: 'warning' });
             }
         }
+
+        // --- EXPORT/IMPORT FULL APP STATE ---
+        function exportFullAppState() {
+            const fullState = {};
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                fullState[key] = localStorage.getItem(key);
+            }
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(fullState, null, 2));
+            const dl = document.createElement('a'); dl.setAttribute("href", dataStr);
+            dl.setAttribute("download", `mexicanen_full_backup_${Date.now()}.json`); document.body.appendChild(dl); dl.click(); dl.remove();
+        }
+
+        function triggerImportFile() {
+            document.getElementById('debug-import-file').click();
+        }
+
+        function importAppState(input) {
+            const file = input.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    const importedState = JSON.parse(e.target.result);
+                    localStorage.clear();
+                    for (const key in importedState) {
+                        localStorage.setItem(key, importedState[key]);
+                    }
+                    closeDebugModal();
+                    await showModal({ message: '¡Base de datos importada con éxito! Recargando app...', icon: 'box' });
+                    window.location.reload();
+                } catch (err) {
+                    await showModal({ message: 'Error importando JSON: ' + err, icon: 'warning' });
+                }
+            };
+            reader.readAsText(file);
+            input.value = ''; // Reset file input element
+        }
+
         async function injectDummyData() {
             const sampleHistory = [
                 { id: Date.now()-5000, game: "Mexicanen", status: "completed", date: "01/06/2026, 22:15", scores: { "Juan": 10, "Carlos": 4, "Mateo": 2 }, loser: "Juan", targetScore: 10, timeline: [{"Juan":0,"Carlos":0,"Mateo":0},{"Juan":4,"Carlos":2,"Mateo":2},{"Juan":10,"Carlos":4,"Mateo":2}] },
                 { id: Date.now()-2000, game: "Mexicanen", status: "completed", date: "02/06/2026, 01:10", scores: { "Juan": 3, "Carlos": 11, "Mateo": 5 }, loser: "Carlos", targetScore: 10, timeline: [{"Juan":0,"Carlos":0,"Mateo":0},{"Juan":3,"Carlos":6,"Mateo":5},{"Juan":3,"Carlos":11,"Mateo":5}] }
             ];
-            localStorage.setItem('mexicanen_timeline_history', JSON.stringify(sampleHistory));
-            localStorage.setItem('mexicanen_players', JSON.stringify(["Juan", "Carlos", "Mateo"]));
-            await showModal({ message: 'Mock dataset successfully injected into system pipeline.', icon: 'box' });
+            
+            // Haalt bestaande geschiedenis op en voegt mock data samen i.p.v. overschrijven
+            let currentHistory = JSON.parse(localStorage.getItem('mexicanen_timeline_history')) || [];
+            history = [...sampleHistory, ...currentHistory];
+            localStorage.setItem('mexicanen_timeline_history', JSON.stringify(history));
+            
+            await showModal({ message: 'Mock games safely appended into history pipeline without clearing data.', icon: 'box' });
             window.location.reload();
         }
+
         async function addPointsToAll() {
             if (localStorage.getItem('mexicanen_game_active') === 'true') {
                 for (let p in scores) { scores[p] += 3; }
@@ -361,9 +405,16 @@
                 await showModal({ message: 'No active operational game detected.', icon: 'warning' });
             }
         }
-        function wipeStorageAndReload() {
-            localStorage.clear();
-            window.location.reload(true);
+
+        async function wipeStorageAndReload() {
+            closeDebugModal();
+            const confirmWipe = await showModal({ message: '¿Estás absolutamente seguro de que quieres BORRAR todos los datos y reiniciar la app?', icon: 'warning', type: 'confirm' });
+            if (confirmWipe) {
+                localStorage.clear();
+                window.location.reload(true);
+            } else {
+                openDebugModal();
+            }
         }
 
         // --- CORE LOGIC ---
@@ -664,7 +715,6 @@
                 return;
             }
             
-            // Nieuwste eerst tonen door de array om te draaien voor de HTML render
             container.innerHTML = [...currentRoundLog].reverse().map(log => `
                 <div class="flex items-start gap-1.5 bg-stone-900/80 p-1.5 rounded-lg border border-stone-800/40 w-full flex-shrink-0">
                     <div class="mt-0.5 flex-shrink-0">${log.iconSvg}</div>
@@ -673,7 +723,6 @@
                 </div>
             `).join('');
             
-            // Houdt de scroll focus automatisch bovenin bij de nieuwste actie
             container.scrollTop = 0;
         }
 
@@ -688,18 +737,17 @@
                 const bgBoxColor = getScoreColor(score, targetScore);
 
                 return `
-                    <div class="flex flex-col p-3 rounded-xl border transition-all ${isLosing ? 'bg-rose-950/20 border-rose-800 shadow-md' : 'bg-stone-900 border-stone-800/80 shadow-sm'} gap-2">
-                        <div class="flex items-center justify-between">
+                    <div class="flex flex-col p-2 rounded-xl border transition-all ${isLosing ? 'bg-rose-950/20 border-rose-800 shadow-md' : 'bg-stone-900 border-stone-800/80 shadow-sm'} gap-1.5">
+                        <div class="flex items-center justify-between px-1">
                             <span class="font-bold text-sm truncate ${isLosing ? 'text-rose-500' : 'text-stone-200'}">${player}</span>
                             <span style="background-color: ${bgBoxColor};" class="text-stone-950 text-xs font-black ${isLosing ? 'animate-pulse' : ''} px-2.5 py-0.5 rounded border border-stone-950/20 min-w-[32px] text-center shadow-inner">${score}</span>
                         </div>
                         
-                        <!-- 4-Button Clean Grid (+1, +2, +4, ±X) -->
-                        <div class="grid grid-cols-4 gap-2 text-xs font-mono font-bold">
-                            <button onclick="updateScore('${player}', 1)" class="bg-stone-800 hover:bg-stone-750 text-stone-300 py-2 rounded shadow-sm transition active:scale-95 border-b border-stone-950">+1</button>
-                            <button onclick="updateScore('${player}', 2)" class="bg-amber-950/40 hover:bg-amber-900/40 text-amber-400 py-2 rounded shadow-sm transition active:scale-95 border-b border-amber-900/60">+2</button>
-                            <button onclick="updateScore('${player}', 4)" class="bg-orange-950/40 hover:bg-orange-900/40 text-orange-400 py-2 rounded shadow-sm transition active:scale-95 border-b border-orange-900/60">+4</button>
-                            <button onclick="updateScoreCustom('${player}')" class="bg-indigo-950/40 hover:bg-indigo-900/40 text-indigo-400 py-2 rounded shadow-sm transition active:scale-95 border-b border-indigo-900/60">±X</button>
+                        <div class="grid grid-cols-4 gap-1.5 text-xs font-mono font-bold">
+                            <button onclick="updateScore('${player}', 1)" class="bg-stone-800 hover:bg-stone-700 text-stone-100 py-1.5 rounded border-b-2 border-stone-950 shadow-sm transition active:scale-95">+1</button>
+                            <button onclick="updateScore('${player}', 2)" class="bg-amber-500 hover:bg-amber-400 text-stone-950 py-1.5 rounded border-b-2 border-amber-700 shadow-sm transition active:scale-95">+2</button>
+                            <button onclick="updateScore('${player}', 4)" class="bg-orange-600 hover:bg-orange-500 text-white py-1.5 rounded border-b-2 border-orange-800 shadow-sm transition active:scale-95">+4</button>
+                            <button onclick="updateScoreCustom('${player}')" class="bg-indigo-600 hover:bg-indigo-500 text-white py-1.5 rounded border-b-2 border-indigo-800 shadow-sm transition active:scale-95">±X</button>
                         </div>
                     </div>
                 `;
@@ -827,6 +875,7 @@
             return Array.from(names);
         }
 
+        // --- CALCULATE GLOBAL STATISTICS ---
         function calculateGlobalStats() {
             let stats = {};
             let uniqueRawNames = getUniqueNamesEver();
@@ -992,6 +1041,7 @@
             dl.setAttribute("download", `mexicanen_data_${Date.now()}.json`); document.body.appendChild(dl); dl.click(); dl.remove();
         }
 
+        // --- RESIZABLE LOG ENGINE (TOP ANCHORED) ---
         function initResizableLog() {
             const resizer = document.getElementById('log-resizer');
             const logContainer = document.getElementById('live-log-container');
@@ -1001,12 +1051,17 @@
 
             function startResize() { isResizing = true; document.body.style.cursor = 'ns-resize'; }
             function stopResize() { if (isResizing) { isResizing = false; document.body.style.cursor = 'default'; localStorage.setItem('mexicanen_log_height', logContainer.style.maxHeight); } }
+            
             function handleResize(clientY) {
                 if (!isResizing) return;
-                let newHeight = clientY - logContainer.getBoundingClientRect().top;
-                if (newHeight < 48) newHeight = 48; if (newHeight > 320) newHeight = 320; 
+                // Sizing anchored from bottom up: moving clientY UP increases height
+                let containerRect = logContainer.getBoundingClientRect();
+                let newHeight = containerRect.bottom - clientY;
+                if (newHeight < 48) newHeight = 48; 
+                if (newHeight > 320) newHeight = 320; 
                 logContainer.style.maxHeight = `${newHeight}px`;
             }
+            
             resizer.addEventListener('mousedown', startResize);
             document.addEventListener('mousemove', (e) => handleResize(e.clientY)); document.addEventListener('mouseup', stopResize);
             resizer.addEventListener('touchstart', startResize);

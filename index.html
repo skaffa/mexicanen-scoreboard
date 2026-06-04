@@ -252,7 +252,7 @@
     </div>
 
     <script>
-        const APP_VERSION = "1.6.0"; 
+        const APP_VERSION = "1.6.1"; 
 
         function checkVersionUpdate() {
             const cachedVersion = localStorage.getItem('mexicanen_version');
@@ -310,7 +310,7 @@
             await showModal({ message: 'Engine Debug Panel Hidden.', icon: 'box' });
         }
 
-        // --- DEBUG MODULE LOGIC (English UI with Custom Modals) ---
+        // --- DEBUG MODULE LOGIC ---
         function openDebugModal() {
             document.getElementById('debug-html-version').innerText = APP_VERSION;
             document.getElementById('debug-active-state').innerText = localStorage.getItem('mexicanen_game_active') === 'true' ? 'RUNNING' : 'IDLE';
@@ -551,6 +551,7 @@
 
             saveActiveGame();
             showScreen('game-screen');
+            renderScoreboard(); // FIX: Spelerskaarten direct renderen bij hervatten
             renderLiveFeed();
         }
 
@@ -572,6 +573,7 @@
             
             saveActiveGame();
             showScreen('game-screen');
+            renderScoreboard(); // FIX: Spelerskaarten direct renderen bij starten
         }
 
         function updateScore(player, amount) {
@@ -682,7 +684,7 @@
                 endBtn.className = "flex-1 bg-rose-700 hover:bg-rose-600 text-stone-100 font-black py-3 rounded-xl text-base shadow-lg transition uppercase tracking-widest border-b-4 border-rose-900 animate-bounce flex justify-center items-center gap-2 flex-shrink-0";
                 endBtn.innerHTML = `<span>¡TERMINAR JUEGO!</span>`;
             } else {
-                endBtn.className = "flex-1 bg-stone-800 hover:bg-stone-700 text-stone-400 font-black py-3 rounded-xl text-sm shadow-lg transition uppercase tracking-widest border-b-4 border-stone-900 flex-shrink-0";
+                endBtn.className = "flex-1 bg-stone-800 hover:bg-stone-750 text-stone-400 font-black py-3 rounded-xl text-sm shadow-lg transition uppercase tracking-widest border-b-4 border-stone-900 flex-shrink-0";
                 endBtn.innerHTML = "<span>Terminar Ronda</span>";
             }
         }

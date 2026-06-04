@@ -24,12 +24,10 @@
 </head>
 <body class="bg-stone-950 text-stone-100 font-sans h-[100dvh] flex flex-col justify-between p-3 select-none overflow-hidden relative pt-8">
 
-    <!-- Debug Button: Smaller, top center of the header -->
-    <button onclick="openDebugModal()" class="absolute top-2 left-1/2 -translate-x-1/2 text-stone-600 hover:text-stone-400 z-40 text-[9px] font-mono tracking-widest bg-stone-900/60 px-2 py-0.5 rounded border border-stone-800 transition">
+    <button id="debug-btn" onclick="openDebugModal()" class="hidden absolute top-2 left-1/2 -translate-x-1/2 text-stone-600 hover:text-stone-400 z-40 text-[9px] font-mono tracking-widest bg-stone-900/60 px-2 py-0.5 rounded border border-stone-800 transition">
         DEBUG PANEL
     </button>
 
-    <!-- Debug Modal (English) -->
     <div id="debug-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-stone-900 border border-indigo-600/40 rounded-2xl w-full max-w-sm p-5 shadow-2xl flex flex-col gap-3 text-center animate-modal">
             <h3 class="text-indigo-400 font-black tracking-wider uppercase text-xs">Engine Debug Dashboard</h3>
@@ -51,6 +49,9 @@
                 <button onclick="addPointsToAll()" class="w-full bg-amber-700 hover:bg-amber-600 text-stone-950 font-black py-2 rounded-xl text-[11px] uppercase tracking-wider transition active:scale-95">
                     Add +3 Pts To Everyone
                 </button>
+                <button onclick="disableDebugButton()" class="w-full bg-orange-950/60 hover:bg-orange-900/60 text-orange-400 border border-orange-900/40 font-bold py-2 rounded-xl text-[11px] uppercase tracking-wider transition active:scale-95">
+                    Hide Debug Button Mode
+                </button>
                 <button onclick="wipeStorageAndReload()" class="w-full bg-rose-950/60 hover:bg-rose-900/60 text-rose-400 border border-rose-900/40 font-bold py-2 rounded-xl text-[11px] uppercase tracking-wider transition active:scale-95">
                     Wipe Storage & Hard Reload
                 </button>
@@ -62,7 +63,6 @@
         </div>
     </div>
 
-    <!-- Generic Custom Modal (Spanish) -->
     <div id="custom-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-stone-900 border border-amber-600/40 rounded-2xl w-full max-w-sm p-5 shadow-2xl flex flex-col gap-4 text-center animate-modal">
             <div id="modal-icon" class="flex justify-center items-center"></div>
@@ -75,7 +75,6 @@
         </div>
     </div>
 
-    <!-- MAIN SETUP SCREEN -->
     <div id="setup-screen" class="w-full max-w-md mx-auto h-full flex flex-col justify-between min-h-0">
         <div class="flex-1 flex flex-col min-h-0 overflow-y-auto pr-1">
             <div class="text-center my-2">
@@ -115,7 +114,6 @@
                 </div>
             </div>
 
-            <!-- PAUSED SESSIONS LIST -->
             <div id="paused-sessions-container" class="mb-4 hidden bg-amber-950/20 border border-amber-900/40 p-3 rounded-xl">
                 <h2 class="text-xs font-black uppercase tracking-wider mb-2 text-amber-500 flex items-center gap-1.5">
                     <svg class="w-3.5 h-3.5 text-amber-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25v13.5m-7.5-13.5v13.5" /></svg>
@@ -146,7 +144,6 @@
         </div>
     </div>
 
-    <!-- GAME SCOREBOARD SCREEN -->
     <div id="game-screen" class="w-full max-w-md mx-auto h-full flex flex-col justify-between min-h-0 hidden">
         <div class="flex-1 flex flex-col min-h-0">
             <div class="flex justify-between items-center my-2 border-b border-stone-800 pb-1.5 relative flex-shrink-0">
@@ -158,17 +155,15 @@
                 <div class="absolute -bottom-1 left-0 right-0 h-1 bg-gradient-to-r from-emerald-800 via-rose-800 via-amber-700 to-indigo-800 rounded"></div>
             </div>
             
-            <!-- ACTION LOG: Moved directly to the top -->
-            <div class="mb-3 bg-stone-900/60 border border-stone-800/80 rounded-xl p-2 flex flex-col flex-shrink-0">
+            <div id="scoreboard-container" class="space-y-2 flex-1 min-h-0 overflow-y-auto pr-1"></div>
+
+            <div class="mt-3 bg-stone-900/60 border border-stone-800/80 rounded-xl p-2 flex flex-col flex-shrink-0">
                 <h3 class="text-[10px] font-bold text-stone-400 uppercase tracking-wider mb-1">Registro de Acciones</h3>
                 <div id="live-log-container" class="space-y-1 max-h-24 overflow-y-auto text-[11px] pr-1 select-none"></div>
                 <div id="log-resizer" class="h-2.5 cursor-ns-resize bg-stone-800/50 hover:bg-amber-500/40 transition-colors rounded mt-2 flex items-center justify-center touch-none">
                     <div class="w-8 h-0.5 bg-stone-600 rounded"></div>
                 </div>
             </div>
-
-            <!-- SCOREBOARD PLAYER CARDS BELOW -->
-            <div id="scoreboard-container" class="space-y-2 flex-1 min-h-0 overflow-y-auto pr-1"></div>
         </div>
 
         <div class="mt-3 flex gap-2 flex-shrink-0">
@@ -184,10 +179,9 @@
         </div>
     </div>
 
-    <!-- WALL OF SHAME HISTORY SCREEN -->
     <div id="history-screen" class="w-full max-w-md mx-auto h-full flex flex-col justify-between min-h-0 hidden">
         <div class="flex-1 flex flex-col min-h-0">
-            <h1 class="text-xl font-black text-center text-amber-500 my-4 tracking-wide uppercase flex items-center justify-center gap-2">
+            <h1 onclick="handleHistoryHeaderClick()" class="text-xl font-black text-center text-amber-500 my-4 tracking-wide uppercase flex items-center justify-center gap-2 cursor-pointer select-none active:scale-98 transition">
                 <svg class="w-5 h-5 text-rose-700" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="10" r="7"/><path d="M9 16h6v4a3 3 0 0 1-3 3 3 3 0 0 1-3-3v-4z"/><circle cx="10.5" cy="9.5" r="1.2" fill="black"/><circle cx="13.5" cy="9.5" r="1.2" fill="black"/></svg>
                 <span>El Muro de los Perdedores</span>
             </h1>
@@ -208,7 +202,6 @@
         </div>
     </div>
 
-    <!-- GLOBAL STATS SCREEN -->
     <div id="stats-screen" class="w-full max-w-md mx-auto h-full flex flex-col justify-between min-h-0 hidden">
         <div class="flex-1 flex flex-col min-h-0">
             <h1 class="text-xl font-black text-center text-indigo-400 my-3 tracking-wide uppercase flex items-center justify-center gap-2">
@@ -233,7 +226,7 @@
                                    <th class="pb-1.5">Jugador</th>
                                    <th class="pb-1.5 text-center">Partidas</th>
                                    <th class="pb-1.5 text-center text-rose-500">Derrotas</th>
-                                   <th class="pb-1.5 text-center text-amber-500">Mex+</th>
+                                   <th class="pb-1.5 text-center text-amber-500">Mex</th>
                                    <th class="pb-1.5 text-center">Pts</th>
                                    <th class="pb-1.5 text-right text-emerald-400">Ratio (D/P)</th>
                                </tr>
@@ -259,7 +252,7 @@
     </div>
 
     <script>
-        const APP_VERSION = "1.5.1"; 
+        const APP_VERSION = "1.6.0"; 
 
         function checkVersionUpdate() {
             const cachedVersion = localStorage.getItem('mexicanen_version');
@@ -284,6 +277,7 @@
         let globalChartInstance = null;
         let targetScore = 10; 
         let history = JSON.parse(localStorage.getItem('mexicanen_timeline_history')) || [];
+        let historyHeaderClicks = 0;
 
         const ICONS = {
             target: `<svg class="w-9 h-9 text-amber-600 mx-auto" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>`,
@@ -299,7 +293,24 @@
             cactus: `<svg class="w-9 h-9 text-emerald-500 mx-auto" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 2v20 M9 22h6 M12 13h-4a2 2 0 0 1-2-2V8 M12 10h4a2 2 0 0 0 2-2V5" /></svg>`
         };
 
-        // --- DEBUG MODULE LOGIC (English UI) ---
+        // --- EASTER EGG FOR HIDDEN DEBUG ---
+        async function handleHistoryHeaderClick() {
+            historyHeaderClicks++;
+            if (historyHeaderClicks === 7) {
+                document.getElementById('debug-btn').classList.remove('hidden');
+                historyHeaderClicks = 0;
+                await showModal({ message: 'Engine Debug Panel Activated!', icon: 'box' });
+            }
+        }
+
+        async function disableDebugButton() {
+            document.getElementById('debug-btn').classList.add('hidden');
+            historyHeaderClicks = 0; 
+            closeDebugModal();
+            await showModal({ message: 'Engine Debug Panel Hidden.', icon: 'box' });
+        }
+
+        // --- DEBUG MODULE LOGIC (English UI with Custom Modals) ---
         function openDebugModal() {
             document.getElementById('debug-html-version').innerText = APP_VERSION;
             document.getElementById('debug-active-state').innerText = localStorage.getItem('mexicanen_game_active') === 'true' ? 'RUNNING' : 'IDLE';
@@ -309,34 +320,35 @@
         function closeDebugModal() {
             document.getElementById('debug-modal').classList.add('hidden');
         }
-        function copyLocalStorageToClipboard() {
+        async function copyLocalStorageToClipboard() {
             const backup = JSON.stringify(localStorage, null, 2);
-            navigator.clipboard.writeText(backup).then(() => {
-                alert('Success: LocalStorage engine payload dumped to clipboard.');
-            }).catch(err => {
-                alert('Error capturing dump: ' + err);
-            });
+            try {
+                await navigator.clipboard.writeText(backup);
+                await showModal({ message: 'Success: LocalStorage engine payload dumped to clipboard.', icon: 'box' });
+            } catch(err) {
+                await showModal({ message: 'Error capturing dump: ' + err, icon: 'warning' });
+            }
         }
-        function injectDummyData() {
+        async function injectDummyData() {
             const sampleHistory = [
                 { id: Date.now()-5000, game: "Mexicanen", status: "completed", date: "01/06/2026, 22:15", scores: { "Juan": 10, "Carlos": 4, "Mateo": 2 }, loser: "Juan", targetScore: 10, timeline: [{"Juan":0,"Carlos":0,"Mateo":0},{"Juan":4,"Carlos":2,"Mateo":2},{"Juan":10,"Carlos":4,"Mateo":2}] },
                 { id: Date.now()-2000, game: "Mexicanen", status: "completed", date: "02/06/2026, 01:10", scores: { "Juan": 3, "Carlos": 11, "Mateo": 5 }, loser: "Carlos", targetScore: 10, timeline: [{"Juan":0,"Carlos":0,"Mateo":0},{"Juan":3,"Carlos":6,"Mateo":5},{"Juan":3,"Carlos":11,"Mateo":5}] }
             ];
             localStorage.setItem('mexicanen_timeline_history', JSON.stringify(sampleHistory));
             localStorage.setItem('mexicanen_players', JSON.stringify(["Juan", "Carlos", "Mateo"]));
-            alert('Mock dataset successfully injected into system pipeline.');
+            await showModal({ message: 'Mock dataset successfully injected into system pipeline.', icon: 'box' });
             window.location.reload();
         }
-        function addPointsToAll() {
+        async function addPointsToAll() {
             if (localStorage.getItem('mexicanen_game_active') === 'true') {
                 for (let p in scores) { scores[p] += 3; }
                 gameTimeline.push(JSON.parse(JSON.stringify(scores)));
                 saveActiveGame();
                 renderScoreboard();
-                alert('Injected +3 points to all operational actors.');
                 closeDebugModal();
+                await showModal({ message: 'Injected +3 points to all operational actors.', icon: 'box' });
             } else {
-                alert('No active operational game detected.');
+                await showModal({ message: 'No active operational game detected.', icon: 'warning' });
             }
         }
         function wipeStorageAndReload() {
@@ -655,18 +667,11 @@
                             <span style="background-color: ${bgBoxColor};" class="text-stone-950 text-xs font-black ${isLosing ? 'animate-pulse' : ''} px-2.5 py-0.5 rounded border border-stone-950/20 min-w-[32px] text-center shadow-inner">${score}</span>
                         </div>
                         
-                        <!-- Complete 10-Button Grid for All Custom Actions -->
-                        <div class="grid grid-cols-5 gap-1 text-[10px] font-mono">
-                            <button onclick="updateScore('${player}', 1)" class="bg-stone-800 hover:bg-stone-750 text-stone-300 py-1.5 rounded font-bold transition active:scale-95 border-b border-stone-950">+1</button>
-                            <button onclick="updateScore('${player}', 2)" class="bg-amber-950/40 hover:bg-amber-900/40 text-amber-400 py-1.5 rounded font-bold transition active:scale-95 border-b border-amber-900/60">Mex</button>
-                            <button onclick="updateScore('${player}', 3)" class="bg-yellow-950/40 hover:bg-yellow-900/40 text-yellow-400 py-1.5 rounded font-bold transition active:scale-95 border-b border-yellow-900/60">Braz</button>
-                            <button onclick="updateScore('${player}', 4)" class="bg-orange-950/40 hover:bg-orange-900/40 text-orange-400 py-1.5 rounded font-bold transition active:scale-95 border-b border-orange-900/60">Chin</button>
-                            <button onclick="updateScore('${player}', 5)" class="bg-red-950/40 hover:bg-red-900/40 text-red-400 py-1.5 rounded font-bold transition active:scale-95 border-b border-red-900/60">Afg</button>
-                            <button onclick="updateScore('${player}', 6)" class="bg-fuchsia-950/40 hover:bg-fuchsia-900/40 text-fuchsia-400 py-1.5 rounded font-bold transition active:scale-95 border-b border-fuchsia-900/60">K6</button>
-                            <button onclick="updateScore('${player}', 7)" class="bg-purple-950/40 hover:bg-purple-900/40 text-purple-400 py-1.5 rounded font-bold transition active:scale-95 border-b border-purple-900/60">K7</button>
-                            <button onclick="updateScore('${player}', 8)" class="bg-rose-950/40 hover:bg-rose-900/40 text-rose-400 py-1.5 rounded font-bold transition active:scale-95 border-b border-rose-900/60">Rus</button>
-                            <button onclick="updateScore('${player}', 16)" class="bg-red-950/60 hover:bg-red-900/60 text-red-500 py-1.5 rounded font-black transition active:scale-95 border-b border-red-900">Ira</button>
-                            <button onclick="updateScoreCustom('${player}')" class="bg-indigo-950/40 hover:bg-indigo-900/40 text-indigo-400 py-1.5 rounded font-bold transition active:scale-95 border-b border-indigo-900/60">±X</button>
+                        <div class="grid grid-cols-4 gap-2 text-xs font-mono font-bold">
+                            <button onclick="updateScore('${player}', 1)" class="bg-stone-800 hover:bg-stone-750 text-stone-300 py-2 rounded shadow-sm transition active:scale-95 border-b border-stone-950">+1</button>
+                            <button onclick="updateScore('${player}', 2)" class="bg-amber-950/40 hover:bg-amber-900/40 text-amber-400 py-2 rounded shadow-sm transition active:scale-95 border-b border-amber-900/60">Mex</button>
+                            <button onclick="updateScore('${player}', 4)" class="bg-orange-950/40 hover:bg-orange-900/40 text-orange-400 py-2 rounded shadow-sm transition active:scale-95 border-b border-orange-900/60">Chin</button>
+                            <button onclick="updateScoreCustom('${player}')" class="bg-indigo-950/40 hover:bg-indigo-900/40 text-indigo-400 py-2 rounded shadow-sm transition active:scale-95 border-b border-indigo-900/60">±X</button>
                         </div>
                     </div>
                 `;
@@ -831,167 +836,4 @@
                             let diff = (curr[pName] || 0) - (prev[pName] || 0);
                             if (diff > 0 && stats[pAlias]) {
                                 stats[pAlias].points += diff;
-                                if (diff === 2 || diff === 3) stats[pAlias].mexicanos += 1;
-                                else if (diff === 4 || diff === 5) stats[pAlias].mexicanos += 2;
-                                else if (diff === 6 || diff === 7 || diff === 8) stats[pAlias].mexicanos += 3;
-                                else if (diff === 16) stats[pAlias].mexicanos += 4;
-                            }
-                        });
-                    }
-                }
-            });
-
-            return Object.values(stats).filter(s => s.played > 0);
-        }
-
-        function changePlayerAlias(rawName, newAlias) {
-            newAlias = newAlias.trim();
-            if (newAlias === "" || newAlias === rawName) {
-                delete aliases[rawName];
-            } else {
-                aliases[rawName] = newAlias;
-            }
-            localStorage.setItem('mexicanen_aliases', JSON.stringify(aliases));
-            renderGlobalStatsPage(); 
-            if (document.getElementById('game-screen').classList.contains('hidden') === false) renderScoreboard();
-        }
-
-        function renderGlobalStatsPage() {
-            const data = calculateGlobalStats();
-            data.sort((a, b) => b.lost - a.lost || b.mexicanos - a.mexicanos);
-
-            let totalPlayed = 0, totalLost = 0, totalMex = 0, totalPoints = 0;
-            data.forEach(s => {
-                totalPlayed += s.played;
-                totalLost += s.lost;
-                totalMex += s.mexicanos;
-                totalPoints += s.points;
-            });
-
-            const tbody = document.getElementById('global-stats-tbody');
-            if (data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 italic text-stone-600">No hay partidas registradas aún.</td></tr>`;
-            } else {
-                let rowsHtml = data.map(s => {
-                    return `
-                        <tr class="hover:bg-stone-900/40 transition-colors">
-                            <td class="py-2 font-bold text-stone-200">${s.name}</td>
-                            <td class="py-2 text-center">${s.played}</td>
-                            <td class="py-2 text-center text-rose-500 font-bold">${s.lost}</td>
-                            <td class="py-2 text-center text-amber-500">${s.mexicanos}</td>
-                            <td class="py-2 text-center text-stone-400">${s.points}</td>
-                            <td class="py-2 text-right font-mono text-[11px] text-emerald-400 font-bold">${s.lost}/${s.played}</td>
-                        </tr>
-                    `;
-                }).join('');
-
-                rowsHtml += `
-                    <tr class="border-t-2 border-stone-800 bg-stone-900/60 font-bold text-stone-100">
-                        <td class="py-2.5 font-black text-amber-500 uppercase tracking-wider">TOTAL</td>
-                        <td class="py-2.5 text-center">${totalPlayed}</td>
-                        <td class="py-2.5 text-center text-rose-500 font-black">${totalLost}</td>
-                        <td class="py-2.5 text-center text-amber-500">${totalMex}</td>
-                        <td class="py-2.5 text-center text-stone-300">${totalPoints}</td>
-                        <td class="py-2.5 text-right font-mono text-[11px] text-emerald-400 font-black">${totalLost}/${totalPlayed}</td>
-                    </tr>
-                `;
-                tbody.innerHTML = rowsHtml;
-            }
-
-            if (globalChartInstance) globalChartInstance.destroy();
-            const ctx = document.getElementById('global-stats-chart').getContext('2d');
-            
-            globalChartInstance = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: data.map(s => s.name),
-                    datasets: [
-                        { label: 'Worp Premium', data: data.map(s => s.mexicanos), backgroundColor: '#f59e0b', borderRadius: 4 },
-                        { label: 'Derrotas', data: data.map(s => s.lost), backgroundColor: '#be185d', borderRadius: 4 }
-                    ]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    scales: {
-                        x: { grid: { display: false }, ticks: { color: '#a8a29e', font: { size: 10, weight: 'bold' } } },
-                        y: { grid: { color: '#1c1917' }, ticks: { color: '#78716c', stepSize: 1, font: { size: 9 } } }
-                    },
-                    plugins: { legend: { position: 'top', labels: { color: '#d6d3d1', font: { size: 10, weight: 'bold' } } } }
-                }
-            });
-
-            const aliasContainer = document.getElementById('alias-manager-list');
-            const rawNames = getUniqueNamesEver();
-            if (rawNames.length === 0) {
-                aliasContainer.innerHTML = `<div class="text-xs italic text-stone-600">No hay nombres registrados.</div>`;
-            } else {
-                aliasContainer.innerHTML = rawNames.map(raw => `
-                    <div class="flex items-center justify-between bg-stone-950 p-2 rounded-lg border border-stone-800/80 gap-2">
-                        <span class="text-xs font-mono font-bold text-stone-400 truncate max-w-[140px]" title="${raw}">${raw}</span>
-                        <div class="flex items-center gap-1">
-                            <span class="text-[10px] text-stone-600 font-bold uppercase">Alias:</span>
-                            <input type="text" value="${aliases[raw] || ''}" placeholder="${raw}" 
-                                onchange="changePlayerAlias('${raw}', this.value)"
-                                class="bg-stone-900 border border-stone-750 text-white rounded px-2 py-1 text-xs font-bold focus:outline-none focus:ring-1 focus:ring-indigo-500 w-32 text-center">
-                        </div>
-                    </div>
-                `).join('');
-            }
-        }
-
-        async function clearHistory() {
-            const confirmClear = await showModal({ message: '¿Borrar todo el historial?', icon: 'warning', type: 'confirm' });
-            if (confirmClear) {
-                Object.values(activeCharts).forEach(c => c.destroy()); activeCharts = {};
-                history = []; localStorage.removeItem('mexicanen_timeline_history'); renderHistory();
-            }
-        }
-
-        async function exportHistory() {
-            if (history.length === 0) { await showModal({ message: '¡No hay datos para exportar!', icon: 'box' }); return; }
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(history, null, 2));
-            const dl = document.createElement('a'); dl.setAttribute("href", dataStr);
-            dl.setAttribute("download", `mexicanen_data_${Date.now()}.json`); document.body.appendChild(dl); dl.click(); dl.remove();
-        }
-
-        function initResizableLog() {
-            const resizer = document.getElementById('log-resizer');
-            const logContainer = document.getElementById('live-log-container');
-            let isResizing = false;
-            const savedHeight = localStorage.getItem('mexicanen_log_height');
-            if (savedHeight) logContainer.style.maxHeight = savedHeight;
-
-            function startResize() { isResizing = true; document.body.style.cursor = 'ns-resize'; }
-            function stopResize() { if (isResizing) { isResizing = false; document.body.style.cursor = 'default'; localStorage.setItem('mexicanen_log_height', logContainer.style.maxHeight); } }
-            function handleResize(clientY) {
-                if (!isResizing) return;
-                let newHeight = clientY - logContainer.getBoundingClientRect().top;
-                if (newHeight < 48) newHeight = 48; if (newHeight > 320) newHeight = 320; 
-                logContainer.style.maxHeight = `${newHeight}px`;
-            }
-            resizer.addEventListener('mousedown', startResize);
-            document.addEventListener('mousemove', (e) => handleResize(e.clientY)); document.addEventListener('mouseup', stopResize);
-            resizer.addEventListener('touchstart', startResize);
-            document.addEventListener('touchmove', (e) => { if (e.touches.length > 0) handleResize(e.touches[0].clientY); });
-            document.addEventListener('touchend', stopResize);
-        }
-
-        function checkAndRestoreActiveGame() {
-            if (localStorage.getItem('mexicanen_game_active') === 'true') {
-                scores = JSON.parse(localStorage.getItem('mexicanen_current_scores')) || {};
-                gameTimeline = JSON.parse(localStorage.getItem('mexicanen_current_timeline')) || [];
-                currentRoundLog = JSON.parse(localStorage.getItem('mexicanen_current_log')) || [];
-                targetScore = parseInt(localStorage.getItem('mexicanen_current_target'), 10) || 10;
-                document.getElementById('score-limit-display').innerText = `Límite: ${targetScore}`;
-                showScreen('game-screen'); renderScoreboard(); renderLiveFeed();
-            } else {
-                renderSetupPlayers();
-                renderPausedSessionsList();
-            }
-        }
-
-        initResizableLog();
-        checkAndRestoreActiveGame();
-    </script>
-</body>
-</html>
+                                if (diff ===

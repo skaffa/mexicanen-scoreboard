@@ -24,10 +24,12 @@
 </head>
 <body class="bg-stone-950 text-stone-100 font-sans h-[100dvh] flex flex-col justify-between p-3 select-none overflow-hidden relative pt-8">
 
+    <!-- Debug Button: Hidden by default, activated via Easter Egg -->
     <button id="debug-btn" onclick="openDebugModal()" class="hidden absolute top-2 left-1/2 -translate-x-1/2 text-stone-600 hover:text-stone-400 z-40 text-[9px] font-mono tracking-widest bg-stone-900/60 px-2 py-0.5 rounded border border-stone-800 transition">
         DEBUG PANEL
     </button>
 
+    <!-- Debug Modal (English) -->
     <div id="debug-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-stone-900 border border-indigo-600/40 rounded-2xl w-full max-w-sm p-5 shadow-2xl flex flex-col gap-2 text-center animate-modal max-h-[90vh] overflow-y-auto custom-scroll">
             <h3 class="text-indigo-400 font-black tracking-wider uppercase text-xs">Engine Debug Dashboard</h3>
@@ -73,6 +75,7 @@
         </div>
     </div>
 
+    <!-- Generic Custom Modal (Spanish) -->
     <div id="custom-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-stone-900 border border-amber-600/40 rounded-2xl w-full max-w-sm p-5 shadow-2xl flex flex-col gap-4 text-center animate-modal">
             <div id="modal-icon" class="flex justify-center items-center"></div>
@@ -85,6 +88,7 @@
         </div>
     </div>
 
+    <!-- MAIN SETUP SCREEN -->
     <div id="setup-screen" class="w-full max-w-md mx-auto h-full flex flex-col justify-between min-h-0">
         <div class="flex-1 flex flex-col min-h-0 overflow-y-auto pr-1">
             <div class="text-center my-2">
@@ -124,6 +128,7 @@
                 </div>
             </div>
 
+            <!-- PAUSED SESSIONS LIST -->
             <div id="paused-sessions-container" class="mb-4 hidden bg-amber-950/20 border border-amber-900/40 p-3 rounded-xl">
                 <h2 class="text-xs font-black uppercase tracking-wider mb-2 text-amber-500 flex items-center gap-1.5">
                     <svg class="w-3.5 h-3.5 text-amber-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25v13.5m-7.5-13.5v13.5" /></svg>
@@ -154,6 +159,7 @@
         </div>
     </div>
 
+    <!-- GAME SCOREBOARD SCREEN -->
     <div id="game-screen" class="w-full max-w-md mx-auto h-full flex flex-col justify-between min-h-0 hidden">
         <div class="flex-1 flex flex-col min-h-0">
             <div class="flex justify-between items-center my-2 border-b border-stone-800 pb-1.5 relative flex-shrink-0">
@@ -165,13 +171,16 @@
                 <div class="absolute -bottom-1 left-0 right-0 h-1 bg-gradient-to-r from-emerald-800 via-rose-800 via-amber-700 to-indigo-800 rounded"></div>
             </div>
             
+            <!-- SCOREBOARD PLAYER CARDS -->
             <div id="scoreboard-container" class="space-y-1.5 flex-1 min-h-0 overflow-y-auto pr-1"></div>
 
-            <div class="mt-3 bg-stone-900/60 border border-stone-800/80 rounded-xl p-2 flex flex-col flex-shrink-0">
-                <h3 class="text-[10px] font-bold text-stone-400 uppercase tracking-wider mb-1">Registro de Acciones</h3>
-                <div id="log-resizer" class="h-2.5 cursor-ns-resize bg-stone-800/50 hover:bg-amber-500/40 transition-colors rounded mb-1.5 flex items-center justify-center touch-none">
-                    <div class="w-8 h-0.5 bg-stone-600 rounded"></div>
+            <!-- ACTION LOG -->
+            <div class="mt-4 bg-stone-900/60 border border-stone-800/80 rounded-xl p-2 flex flex-col flex-shrink-0 relative">
+                <!-- Drag resizer centered exactly on the top border edge -->
+                <div id="log-resizer" class="absolute top-0 left-0 right-0 h-3 -translate-y-1/2 cursor-ns-resize z-30 flex items-center justify-center touch-none group">
+                    <div class="w-12 h-1 bg-stone-700 group-hover:bg-amber-500 rounded-full transition-colors shadow-md"></div>
                 </div>
+                <h3 class="text-[10px] font-bold text-stone-400 uppercase tracking-wider mb-1">Registro de Acciones</h3>
                 <div id="live-log-container" class="flex flex-col justify-end gap-1 max-h-24 overflow-y-auto text-[11px] pr-1 select-none"></div>
             </div>
         </div>
@@ -189,6 +198,7 @@
         </div>
     </div>
 
+    <!-- WALL OF SHAME HISTORY SCREEN -->
     <div id="history-screen" class="w-full max-w-md mx-auto h-full flex flex-col justify-between min-h-0 hidden">
         <div class="flex-1 flex flex-col min-h-0">
             <h1 onclick="handleHistoryHeaderClick()" class="text-xl font-black text-center text-amber-500 my-4 tracking-wide uppercase flex items-center justify-center gap-2 cursor-pointer select-none active:scale-98 transition">
@@ -212,6 +222,7 @@
         </div>
     </div>
 
+    <!-- GLOBAL STATS SCREEN -->
     <div id="stats-screen" class="w-full max-w-md mx-auto h-full flex flex-col justify-between min-h-0 hidden">
         <div class="flex-1 flex flex-col min-h-0">
             <h1 class="text-xl font-black text-center text-indigo-400 my-3 tracking-wide uppercase flex items-center justify-center gap-2">
@@ -262,7 +273,7 @@
     </div>
 
     <script>
-        const APP_VERSION = "1.7.0"; 
+        const APP_VERSION = "1.7.1"; 
 
         function checkVersionUpdate() {
             const cachedVersion = localStorage.getItem('mexicanen_version');
@@ -303,7 +314,6 @@
             cactus: `<svg class="w-9 h-9 text-emerald-500 mx-auto" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 2v20 M9 22h6 M12 13h-4a2 2 0 0 1-2-2V8 M12 10h4a2 2 0 0 0 2-2V5" /></svg>`
         };
 
-        // --- EASTER EGG FOR HIDDEN DEBUG ---
         async function handleHistoryHeaderClick() {
             historyHeaderClicks++;
             if (historyHeaderClicks === 7) {
@@ -320,7 +330,6 @@
             await showModal({ message: 'Engine Debug Panel Hidden.', icon: 'box' });
         }
 
-        // --- DEBUG MODULE LOGIC ---
         function openDebugModal() {
             document.getElementById('debug-html-version').innerText = APP_VERSION;
             document.getElementById('debug-active-state').innerText = localStorage.getItem('mexicanen_game_active') === 'true' ? 'RUNNING' : 'IDLE';
@@ -340,7 +349,6 @@
             }
         }
 
-        // --- EXPORT/IMPORT FULL APP STATE ---
         function exportFullAppState() {
             const fullState = {};
             for (let i = 0; i < localStorage.length; i++) {
@@ -375,7 +383,7 @@
                 }
             };
             reader.readAsText(file);
-            input.value = ''; // Reset file input element
+            input.value = ''; 
         }
 
         async function injectDummyData() {
@@ -384,7 +392,6 @@
                 { id: Date.now()-2000, game: "Mexicanen", status: "completed", date: "02/06/2026, 01:10", scores: { "Juan": 3, "Carlos": 11, "Mateo": 5 }, loser: "Carlos", targetScore: 10, timeline: [{"Juan":0,"Carlos":0,"Mateo":0},{"Juan":3,"Carlos":6,"Mateo":5},{"Juan":3,"Carlos":11,"Mateo":5}] }
             ];
             
-            // Haalt bestaande geschiedenis op en voegt mock data samen i.p.v. overschrijven
             let currentHistory = JSON.parse(localStorage.getItem('mexicanen_timeline_history')) || [];
             history = [...sampleHistory, ...currentHistory];
             localStorage.setItem('mexicanen_timeline_history', JSON.stringify(history));
@@ -417,7 +424,6 @@
             }
         }
 
-        // --- CORE LOGIC ---
         function resolveAlias(name) {
             if (!name) return "Anónimo";
             return aliases[name.trim()] ? aliases[name.trim()].trim() : name.trim();
@@ -601,7 +607,7 @@
 
             scores = session.scores;
             gameTimeline = session.timeline;
-            currentRoundLog = session.log || [];
+            currentRoundLog = [...(session.log || [])]; 
             targetScore = session.targetScore || 10;
             players = Object.keys(scores);
 
@@ -668,7 +674,6 @@
 
         function logLiveEvent(player, amount) {
             let iconSvg = ''; let eventText = '';
-            
             let isSpecial = [2, 3, 4, 5, 6, 7, 8, 16, 32, 64].includes(amount) || (amount >= 128 && (amount & (amount - 1)) === 0);
 
             if (amount === 1) {
@@ -875,7 +880,6 @@
             return Array.from(names);
         }
 
-        // --- CALCULATE GLOBAL STATISTICS ---
         function calculateGlobalStats() {
             let stats = {};
             let uniqueRawNames = getUniqueNamesEver();
@@ -1041,7 +1045,6 @@
             dl.setAttribute("download", `mexicanen_data_${Date.now()}.json`); document.body.appendChild(dl); dl.click(); dl.remove();
         }
 
-        // --- RESIZABLE LOG ENGINE (TOP ANCHORED) ---
         function initResizableLog() {
             const resizer = document.getElementById('log-resizer');
             const logContainer = document.getElementById('live-log-container');
@@ -1054,7 +1057,6 @@
             
             function handleResize(clientY) {
                 if (!isResizing) return;
-                // Sizing anchored from bottom up: moving clientY UP increases height
                 let containerRect = logContainer.getBoundingClientRect();
                 let newHeight = containerRect.bottom - clientY;
                 if (newHeight < 48) newHeight = 48; 
